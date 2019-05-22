@@ -1,0 +1,20 @@
+{
+  "author": "seraphinush . codeagon . saegusae et al",
+  "conflicts": ["fps-utils"],
+  "description": "tera-proxy module to help increase fps",
+  "disableAutoUpdate": true,
+  "donationUrl": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=B7QQJZV9L5P2J&source=url",
+  "name": "fps-utils-lite",
+  "options": {
+    "niceName": "fps-utils",
+    "reloadable": true,
+    "settingsVersion": 1,
+    "settingsFile": "config.json",
+    "settingsMigrator": "settings.js"
+  },
+  "servers": [
+    "https://raw.githubusercontent.com/seraphinush-gaming/fps-utils-lite/master/"
+  ],
+  "supportUrl": "https://github.com/seraphinush-gaming/fps-utils-lite/blob/master/README.md",
+  "version": "1.00.00"
+}
