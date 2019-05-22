@@ -1,8 +1,7 @@
 ### NOTE
-This module is a simplified version of module `fps-utils` by Saegusae, Codeagon, Risenio, et al. and does not have all the features of the full module. for the full experience, please refer to the forks of the full modules below.
+This module is a simplified version of module `fps-utils` by Saegusae, Codeagon, Risenio, et al. and does not have all the features of the full module. for the full experience, please refer to the forks of the full module below.
 - Support Codeagon : [![ko-fi](https://img.shields.io/badge/kofi-donate-333333.svg?colorA=169BD7&colorB=333333)](https://ko-fi.com/codeagon)
 - Support Saegusae : [![patreon](https://img.shields.io/badge/patreon-donate-333333.svg?colorA=E85B46&colorB=333333)](https://www.patreon.com/saegusa)
-
 
 ---
 
