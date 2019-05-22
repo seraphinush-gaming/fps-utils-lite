@@ -1,8 +1,12 @@
 {
 	"files": {
 		"README.md": "535035f96e0e1cd77632a4dee0b42f1fd544ad23ace529b2dc0cd5e0f2fe8601",
-		"index.js": "77fd58019ce9dea3df4a6d6088c2fb26b423220570ff2096e1729df6ff3f5f74",
-		"module.json": "be126bfc1d11b4448da6b1bd1177a34c4e10c625d0c0201501b4b140aa737f73",
+		"config.json": {
+			"overwrite": false,
+			"hash": "e6e8d5e20c04c050955079ab3ab682557d993a562a8bcf2f2480ac9698c7a4b7"
+		},
+		"index.js": "7ed4ee845c7a4fc415501c0abcc2a1009afbce2fd0f8def12f405e0b3328f3c1",
+		"module.json": "df269baa0a0388472fb70ee5fc18dd3fd6fbfe4d83b5796e1e54b9b55bc34f2e",
 		"settings.js": "b1afcbdf5eb9e8860eff417920b1a8bcfc2179118ea025ec5742c965dcbd340b"
 	},
 	"defs": {
@@ -26,6 +30,7 @@
 		"S_SPAWN_PROJECTILE": [5,6],
 		"S_SPAWN_USER": 14,
 		"S_START_USER_PROJECTILE": 9,
-		"S_UNMOUNT_VEHICLE": 2
+		"S_UNMOUNT_VEHICLE": 2,
+		"S_USER_LOCATION": 5
 	}
 }

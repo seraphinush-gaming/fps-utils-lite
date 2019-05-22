@@ -7,6 +7,7 @@ class FpsUtilsLite {
     this.mod = mod;
     this.cmd = mod.command;
     this.settings = mod.settings;
+    this.hooks = [];
 
     this.myGameId = BigInt(0);
     this.myGuild = new Set();
@@ -90,7 +91,7 @@ class FpsUtilsLite {
         } else {
           this.showAll();
         }
-        message(`Hiding of everyone but your group ${this.settings.party ? 'en' : 'dis'}abled`);
+        this.send(`Hiding of everyone but your group ${this.settings.party ? 'en' : 'dis'}abled`);
       },
       'proj': () => {
         this.settings.hideProjectiles = !this.settings.hideProjectiles;
@@ -155,39 +156,38 @@ class FpsUtilsLite {
     this.myGuild = undefined;
     this.myGameId = undefined;
 
+    this.hooks = undefined;
     this.settings = undefined;
     this.cmd = undefined;
     this.mod = undefined;
   }
 
   // helper
-  getClass(m) {
-    return (m % 100);
-  }
-
   showParty() {
     for (let i in this.user_list) {
-      if (!this.party_list.includes(this.user_list[i].name)) {
+      let user = this.user_list[i];
+      if (!this.party_list.includes(user.name)) {
+        if (this.settings.guild && this.myGuild.has(user.guildName) && user.guildName !== '') {
+          continue;
+        }
         this.mod.send('S_DESPAWN_USER', 3, {
-          gameId: this.user_list[i].gameId,
+          gameId: user.gameId,
           type: 1
         });
-        this.user_hidden[this.user_list[i].gameId] = this.user_list[i];
+        this.user_hidden[user.gameId] = user;
       }
     }
   }
 
   showAll() {
-    if (this.settings.mode !== 3) {
-      for (let i in this.user_hidden) {
-        this.mod.send('S_SPAWN_USER', 14, this.user_hidden[i]);
-        delete this.user_hidden[i];
-      }
+    for (let i in this.user_hidden) {
+      this.mod.send('S_SPAWN_USER', 14, this.user_hidden[i]);
+      delete this.user_hidden[i];
     }
   }
 
   hideAll() {
-    if (!this.settings.party) {
+    if (!this.settings.party || !this.settings.guild) {
       for (let i in this.user_list) {
         this.mod.send('S_DESPAWN_USER', 3, {
           gameId: this.user_list[i].gameId,
@@ -196,6 +196,17 @@ class FpsUtilsLite {
         this.user_hidden[this.user_list[i].gameId] = this.user_list[i];
       }
     }
+  }
+
+  updateLoc(e) {
+    this.mod.send('S_USER_LOCATION', 5, {
+      gameId: e.gameId,
+      loc: e.loc,
+      w: e.w,
+      dest: e.loc,
+      speed: 300,
+      type: 7
+    });
   }
 
   // code
@@ -210,7 +221,7 @@ class FpsUtilsLite {
       if (this.settings.mode === 3 ||
         //this.settings.blacklistedNames.includes(e.name.toString().toLowerCase()) ||
         //this.settings.classes[getClass(e.templateId)].isHidden === true ||
-        (this.settings.guild && !this.myGuild.has(e.guildName))
+        (this.settings.guild && !this.myGuild.has(e.guildName)) ||
         (this.settings.party && !this.party_list.includes(e.name))) {
         this.user_hidden[e.gameId] = e;
         return false;
@@ -369,7 +380,7 @@ class FpsUtilsLite {
     }
   }
 
-  send() { this.cmd.this.send(': ' + [...arguments].join('\n\t - ')); }
+  send() { this.cmd.message(': ' + [...arguments].join('\n\t - ')); }
 
   saveState() {
     let state = {
