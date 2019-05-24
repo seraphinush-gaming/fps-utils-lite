@@ -1,6 +1,6 @@
 ### NOTE
 This module is a simplified version of module `fps-utils` by Saegusae, Codeagon, Risenio, et al. and does not have all the features of the full module. for the full experience, please refer to the forks of the full module below.
-- Support Codeagon : [![ko-fi](https://img.shields.io/badge/kofi-donate-333333.svg?colorA=169BD7&colorB=333333)](https://ko-fi.com/codeagon)
+- Support Codeagon : [![ko-fi](https://img.shields.io/badge/kofi-donate-333333.svg?colorA=F0AD4E&colorB=333333)](https://ko-fi.com/codeagon)
 - Support Saegusae : [![patreon](https://img.shields.io/badge/patreon-donate-333333.svg?colorA=E85B46&colorB=333333)](https://www.patreon.com/saegusa)
 
 ---
@@ -40,8 +40,10 @@ Support seraph via paypal donations, thanks in advance !
   - Toggle party members hide/show
 - __`proj`__
   - Toggle projectiles hide/show
-- __`servant`__
+- __`servants`__
   - Toggle partners and pets hide/show
+- __`status`__
+  - Print status of relevant variables
 - __`summons`__
   - Toggle summons hide/show
   - `mine` : Toggles user summons hide/show

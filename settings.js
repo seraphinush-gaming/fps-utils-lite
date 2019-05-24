@@ -2,7 +2,7 @@
 
 const DefaultSettings = {
   "mode": 0,
-  "guild": true,
+  "guild": false,
   "party": false,
   "hideFireworks": false,
   "hideAllAbnormies": true,

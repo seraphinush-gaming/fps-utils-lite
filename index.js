@@ -13,11 +13,13 @@ class FpsUtilsLite {
     this.myGuild = new Set();
 
     this.user_list = {};
+    this.user_shown = {};
     this.user_hidden = {};
 
     this.party_list = [];
 
     this.npc_hidden = {};
+
     this.servant_hidden = {};
 
     this.cmd.add('fps', {
@@ -27,6 +29,7 @@ class FpsUtilsLite {
       },
       'guild': () => {
         this.settings.guild = !this.settings.guild;
+        this.handleHideUser();
         this.send(`Hiding of everyone but your guild members ${this.settings.guild ? 'en' : 'dis'}abled`);
       },
       'hit': (arg) => {
@@ -49,35 +52,36 @@ class FpsUtilsLite {
         }
       },
       'mode': (arg) => {
+        let prev = this.settings.mode;
         switch (arg) {
           case "0":
-            if (this.settings.mode === 3) {
-              this.showAll();
-            }
             this.settings.mode = 0;
             this.settings.hitOther = false;
-            this.send(`All FPS improvements disabled`);
+            if (prev === 3) {
+              this.handleHideUser();
+            }
+            this.send(`FPS mode set to 0, all FPS improvements disabled`);
             break;
           case "1":
-            if (this.settings.mode === 3) {
-              this.showAll();
-            }
             this.settings.mode = 1;
             this.settings.hitOther = true;
+            if (prev === 3) {
+              this.handleHideUser();
+            }
             this.send(`FPS mode set to 1, projectiles hidden and abnormalities disabled`);
             break;
           case "2":
-            if (this.settings.mode === 3) {
-              this.showAll();
-            }
             this.settings.mode = 2;
             this.settings.hitOther = true;
+            if (prev === 3) {
+              this.handleHideUser();
+            }
             this.send(`FPS mode set to 2, all skill effects disabled`);
             break;
           case "3":
-            this.hideAll();
             this.settings.mode = 3;
             this.settings.hitOther = true;
+            this.handleHideUser();
             this.send(`FPS mode set to 3, all players, their effects and their hit effects disabled`);
             break;
           default:
@@ -86,20 +90,30 @@ class FpsUtilsLite {
       },
       'party': () => {
         this.settings.party = !this.settings.party
-        if (this.settings.party) {
-          this.showParty();
-        } else {
-          this.showAll();
-        }
+        this.handleHideUser();
         this.send(`Hiding of everyone but your group ${this.settings.party ? 'en' : 'dis'}abled`);
       },
       'proj': () => {
         this.settings.hideProjectiles = !this.settings.hideProjectiles;
         this.send(`Hiding of projectile effects ${this.settings.hideProjectiles ? 'en' : 'dis'}abled`);
       },
-      'servant': () => {
+      'refresh': () => {
+        this.handleHideUser();
+        this.send(`Refreshed spawned users`);
+      },
+      'servants': () => {
         this.settings.hideServants = !this.settings.hideServants;
         this.send(`Hiding of pets and partners ${this.settings.hideServants ? 'en' : 'dis'}abled`);
+      },
+      'status': () => {
+        this.send(`Status : `,
+        `mode : ${this.settings.mode}`,
+        `guild : ${this.settings.guild}`,
+        `party : ${this.settings.party}`,
+        `servants : ${this.settings.hideServants}`,
+        `summons : ${this.settings.hideAllSummons}`,
+        `projectiles : ${this.settings.hideProjectiles}`,
+        `fireworks : ${this.settings.hideFireworks}`);
       },
       'summons': (arg) => {
         switch (arg) {
@@ -116,7 +130,7 @@ class FpsUtilsLite {
         }
       },
       '$default': () => {
-        this.send(`Invalid argument. uasge : fps [fireworks|hit|guild|hit|mode|party|proj|servant|summons]`);
+        this.send(`Invalid argument. uasge : fps [fireworks|hit|guild|hit|mode|party|proj|refresh|servant|status|summons]`);
       }
     });
 
@@ -127,8 +141,12 @@ class FpsUtilsLite {
 
     this.mod.hook('S_LOAD_TOPO', 'raw', { order: -1000 }, () => {
       this.user_list = {};
+      this.user_shown = {};
       this.user_hidden = {};
+
       this.npc_hidden = {};
+
+      this.servant_hidden = {};
     });
 
     this.mod.hookOnce('S_GET_USER_LIST', 15, { order: -1000 }, (e) => {
@@ -163,39 +181,72 @@ class FpsUtilsLite {
   }
 
   // helper
-  showParty() {
-    for (let i in this.user_list) {
-      let user = this.user_list[i];
-      if (!this.party_list.includes(user.name)) {
-        if (this.settings.guild && this.myGuild.has(user.guildName) && user.guildName !== '') {
-          continue;
-        }
-        this.mod.send('S_DESPAWN_USER', 3, {
-          gameId: user.gameId,
-          type: 1
-        });
-        this.user_hidden[user.gameId] = user;
-      }
+  async handleHideUser() {
+    await this.hideAll();
+    if (this.settings.mode === 3) {
+      return;
     }
+    if (this.settings.guild) {
+      await this.showGuild();
+    }
+    if (this.settings.party) {
+      await this.showParty();
+    }
+    if (this.settings.mode < 3 && !this.settings.guild && !this.settings.party) {
+      this.showAll();
+    }
+  }
+
+  showGuild() {
+    return new Promise((resolve) => {
+      for (let i in this.user_hidden) {
+        let user = this.user_hidden[i];
+        if (this.myGuild.has(user.guildName) && user.guildName !== '') {
+          this.mod.send('S_SPAWN_USER', 14, user);
+          this.user_shown[user.gameId] = user;
+          delete this.user_hidden[i];
+        }
+      }
+      resolve();
+    });
+  }
+
+  showParty() {
+    return new Promise((resolve) => {
+      for (let i in this.user_hidden) {
+        let user = this.user_hidden[i];
+        if (this.party_list.includes(user.name)) {
+          this.mod.send('S_SPAWN_USER', 14, user);
+          this.user_shown[user.gameId] = user;
+          delete this.user_hidden[i];
+        }
+      }
+      resolve();
+    });
   }
 
   showAll() {
     for (let i in this.user_hidden) {
       this.mod.send('S_SPAWN_USER', 14, this.user_hidden[i]);
+      this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
       delete this.user_hidden[i];
     }
+    this.user_hidden = {};
   }
 
   hideAll() {
-    if (!this.settings.party || !this.settings.guild) {
+    return new Promise((resolve) => {
       for (let i in this.user_list) {
         this.mod.send('S_DESPAWN_USER', 3, {
           gameId: this.user_list[i].gameId,
           type: 1
         });
         this.user_hidden[this.user_list[i].gameId] = this.user_list[i];
+        delete this.user_shown[i];
       }
-    }
+      this.user_shown = {};
+      resolve();
+    });
   }
 
   updateLoc(e) {
@@ -216,21 +267,26 @@ class FpsUtilsLite {
 
   load() {
     // user
-    this.hook('S_SPAWN_USER', 14, { order: 1000 }, (e) => {
+    this.hook('S_SPAWN_USER', 14, { order: -10 }, (e) => {
       this.user_list[e.gameId] = e;
-      if (this.settings.mode === 3 ||
+      if (this.settings.mode === 3
         //this.settings.blacklistedNames.includes(e.name.toString().toLowerCase()) ||
-        //this.settings.classes[getClass(e.templateId)].isHidden === true ||
-        (this.settings.guild && !this.myGuild.has(e.guildName)) ||
+        //this.settings.classes[getClass(e.templateId)].isHidden === true
+      ) {
+        this.user_hidden[e.gameId] = e;
+        return false;
+      } else if ((this.settings.guild && !(this.myGuild.has(e.guildName) && e.guildName !== '')) ||
         (this.settings.party && !this.party_list.includes(e.name))) {
         this.user_hidden[e.gameId] = e;
         return false;
       }
+      this.user_shown[e.gameId] = e;
     });
 
     this.hook('S_DESPAWN_USER', 3, { order: 1000 }, (e) => {
-      delete this.user_hidden[e.gameId];
       delete this.user_list[e.gameId];
+      delete this.user_shown[e.gameId];
+      delete this.user_hidden[e.gameId];
     });
 
     // party
@@ -241,11 +297,12 @@ class FpsUtilsLite {
     });
 
     this.hook('S_LEAVE_PARTY', 1, () => {
+      this.handleHideUser();
       this.party_list = [];
     });
 
     // npc: summons, fireworks
-    this.hook('S_SPAWN_NPC', 11, { order: 1000 }, (e) => {
+    this.hook('S_SPAWN_NPC', 11, { order: -10 }, (e) => {
       if (e.huntingZoneId === 1023) {
         if (this.settings.hideAllSummons) {
           if (this.settings.keepMySummons && this.myGameId === e.owner) {
@@ -266,7 +323,7 @@ class FpsUtilsLite {
     });
 
     // servant
-    this.hook('S_REQUEST_SPAWN_SERVANT', 1, { order: 1000 }, (e) => {
+    this.hook('S_REQUEST_SPAWN_SERVANT', 1, { order: -10 }, (e) => {
       if (this.settings.hideServants && this.myGameId !== e.ownerId) {
         this.servant_hidden[e.gameId] = e;
         return false;
@@ -387,6 +444,7 @@ class FpsUtilsLite {
       myGameId: this.myGameId,
       myGuild: this.myGuild,
       user_list: this.user_list,
+      user_shown: this.user_shown,
       user_hidden: this.user_hidden,
       party_list: this.party_list,
       npc_hidden: this.npc_hidden,
@@ -396,9 +454,10 @@ class FpsUtilsLite {
   }
 
   loadState(state) {
-    this.myGameId = state.myGameId
+    this.myGameId = state.myGameId;
     this.myGuild = state.myGuild;
     this.user_list = state.user_list;
+    this.user_shown = state.user_shown;
     this.user_hidden = state.user_hidden;
     this.party_list = state.party_list;
     this.npc_hidden = state.npc_hidden;
