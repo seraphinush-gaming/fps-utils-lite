@@ -273,7 +273,7 @@ class FpsUtilsLite {
         this.user_hidden[e.gameId] = e;
         return false;
       }
-      if (this.settings.guild && this.myGuild.has(e.guildName)) {
+      if (this.settings.guild && e.guildName !== '' && this.myGuild.has(e.guildName)) {
         this.user_shown[e.gameId] = e;
         return;
       }
