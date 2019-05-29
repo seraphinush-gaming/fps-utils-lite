@@ -69,6 +69,12 @@ Support seraph via paypal donations, thanks in advance !
 ## Changelog
 <details>
 
+    1.03
+    - Fixed issue where S_SPAWN_USER could not load party members
+    1.02
+    - Fixed bugs
+    1.01
+    - Fixed bugs
     1.00
     - Initial fork and commit
 

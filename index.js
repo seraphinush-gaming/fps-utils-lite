@@ -186,11 +186,11 @@ class FpsUtilsLite {
     if (this.settings.mode === 3) {
       return;
     }
-    if (this.settings.guild) {
-      await this.showGuild();
-    }
     if (this.settings.party) {
-      await this.showParty();
+      this.showParty();
+    }
+    if (this.settings.guild) {
+      this.showGuild();
     }
     if (this.settings.mode < 3 && !this.settings.guild && !this.settings.party) {
       this.showAll();
@@ -269,21 +269,23 @@ class FpsUtilsLite {
     // user
     this.hook('S_SPAWN_USER', 14, { order: -10 }, (e) => {
       this.user_list[e.gameId] = e;
-      if (this.settings.mode === 3
-        //this.settings.blacklistedNames.includes(e.name.toString().toLowerCase()) ||
-        //this.settings.classes[getClass(e.templateId)].isHidden === true
-      ) {
-        this.user_hidden[e.gameId] = e;
-        return false;
-      } else if ((this.settings.guild && !(this.myGuild.has(e.guildName) && e.guildName !== '')) ||
-        (this.settings.party && !this.party_list.includes(e.name))) {
+      if (this.settings.mode === 3) {
         this.user_hidden[e.gameId] = e;
         return false;
       }
-      this.user_shown[e.gameId] = e;
+      if (this.settings.guild && this.myGuild.has(e.guildName)) {
+        this.user_shown[e.gameId] = e;
+        return;
+      }
+      if (this.settings.party && this.party_list.includes(e.name)) {
+        this.user_shown[e.gameId] = e;
+        return;
+      }
+      this.user_hidden[e.gameId] = e;
+      return false;
     });
 
-    this.hook('S_DESPAWN_USER', 3, { order: 1000 }, (e) => {
+    this.hook('S_DESPAWN_USER', 3, { order: 999 }, (e) => {
       delete this.user_list[e.gameId];
       delete this.user_shown[e.gameId];
       delete this.user_hidden[e.gameId];
@@ -297,8 +299,8 @@ class FpsUtilsLite {
     });
 
     this.hook('S_LEAVE_PARTY', 1, () => {
-      this.handleHideUser();
       this.party_list = [];
+      this.handleHideUser();
     });
 
     // npc: summons, fireworks
