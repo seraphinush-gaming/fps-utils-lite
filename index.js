@@ -187,10 +187,10 @@ class FpsUtilsLite {
       return;
     }
     if (this.settings.party) {
-      this.showParty();
+      await this.showParty();
     }
     if (this.settings.guild) {
-      this.showGuild();
+      await this.showGuild();
     }
     if (this.settings.mode < 3 && !this.settings.guild && !this.settings.party) {
       this.showAll();
@@ -285,7 +285,7 @@ class FpsUtilsLite {
       return false;
     });
 
-    this.hook('S_DESPAWN_USER', 3, { order: 999 }, (e) => {
+    this.hook('S_DESPAWN_USER', 3, { order: 1000 }, (e) => {
       delete this.user_list[e.gameId];
       delete this.user_shown[e.gameId];
       delete this.user_hidden[e.gameId];
