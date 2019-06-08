@@ -1,7 +1,7 @@
 {
   "author": "seraphinush . codeagon . saegusae et al",
   "conflicts": ["fps-utils"],
-  "description": "tera-proxy module to help increase fps",
+  "description": "tera-toolbox module to help increase fps",
   "disableAutoUpdate": false,
   "donationUrl": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=B7QQJZV9L5P2J&source=url",
   "name": "fps-utils-lite",
@@ -16,5 +16,5 @@
     "https://raw.githubusercontent.com/seraphinush-gaming/fps-utils-lite/master/"
   ],
   "supportUrl": "https://github.com/seraphinush-gaming/fps-utils-lite/blob/master/README.md",
-  "version": "1.03.02"
+  "version": "1.03.03"
 }

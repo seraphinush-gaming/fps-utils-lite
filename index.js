@@ -56,10 +56,10 @@ class FpsUtilsLite {
         switch (arg) {
           case "0":
             this.settings.mode = 0;
+            this.settings.guild = false;
             this.settings.hitOther = false;
-            if (prev === 3) {
-              this.handleHideUser();
-            }
+            this.settings.party = false;
+            this.handleHideUser();
             this.send(`FPS mode set to 0, all FPS improvements disabled`);
             break;
           case "1":
@@ -107,13 +107,13 @@ class FpsUtilsLite {
       },
       'status': () => {
         this.send(`Status : `,
-        `mode : ${this.settings.mode}`,
-        `guild : ${this.settings.guild}`,
-        `party : ${this.settings.party}`,
-        `servants : ${this.settings.hideServants}`,
-        `summons : ${this.settings.hideAllSummons}`,
-        `projectiles : ${this.settings.hideProjectiles}`,
-        `fireworks : ${this.settings.hideFireworks}`);
+          `mode : ${this.settings.mode}`,
+          `guild : ${this.settings.guild}`,
+          `party : ${this.settings.party}`,
+          `servants : ${this.settings.hideServants}`,
+          `summons : ${this.settings.hideAllSummons}`,
+          `projectiles : ${this.settings.hideProjectiles}`,
+          `fireworks : ${this.settings.hideFireworks}`);
       },
       'summons': (arg) => {
         switch (arg) {
@@ -279,6 +279,9 @@ class FpsUtilsLite {
       }
       if (this.settings.party && this.party_list.includes(e.name)) {
         this.user_shown[e.gameId] = e;
+        return;
+      }
+      if (!this.settings.guild && !this.settings.party && this.settings.mode < 3) {
         return;
       }
       this.user_hidden[e.gameId] = e;
