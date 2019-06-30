@@ -1,8 +1,8 @@
 {
 	"files": {
 		"README.md": "74a4bdbba92ae5f33c6b64c1d7a1687872a32d784e162c265093126c5e2d10a9",
-		"index.js": "71eb548799b0ed6bab54a80787d6a87f2eb146bd8cfc2b310acaa08bd611c336",
-		"module.json": "382b290350fa06632b43e23e7f2fffff0ca211de0b4ce2eacfec335241c94c7c",
+		"index.js": "8f8c2f4902967de34b606c12f2ace286fd26e1f0616bc77172025536fd968dc2",
+		"module.json": "521a6eae30dd28dd6000a070da1152890013756049d38a1c2a1272b01acb37c1",
 		"settings.js": "a9909118b3ca106776f44fdd735712c11042351aff6f4a1fab598f791b44f638"
 	},
 	"defs": {
@@ -24,7 +24,7 @@
 		"S_REQUEST_SPAWN_SERVANT": 1,
 		"S_SPAWN_NPC": 11,
 		"S_SPAWN_PROJECTILE": [5,6],
-		"S_SPAWN_USER": [14,15],
+		"S_SPAWN_USER": 15,
 		"S_START_USER_PROJECTILE": 9,
 		"S_UNMOUNT_VEHICLE": 2,
 		"S_USER_LOCATION": 5

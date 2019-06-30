@@ -224,7 +224,7 @@ class FpsUtilsLite {
       for (let i in this.user_hidden) {
         let user = this.user_hidden[i];
         if (this.myGuild.has(user.guildName) && user.guildName !== '') {
-          this.mod.send('S_SPAWN_USER', 14, user);
+          this.mod.send('S_SPAWN_USER', 15, user);
           this.user_shown[user.gameId] = user;
           delete this.user_hidden[i];
         }
@@ -238,7 +238,7 @@ class FpsUtilsLite {
       for (let i in this.user_hidden) {
         let user = this.user_hidden[i];
         if (this.party_list.includes(user.name)) {
-          this.mod.send('S_SPAWN_USER', 14, user);
+          this.mod.send('S_SPAWN_USER', 15, user);
           this.user_shown[user.gameId] = user;
           delete this.user_hidden[i];
         }
@@ -250,7 +250,7 @@ class FpsUtilsLite {
   showAll() {
     return new Promise((resolve) => {
       for (let i in this.user_hidden) {
-        this.mod.send('S_SPAWN_USER', 14, this.user_hidden[i]);
+        this.mod.send('S_SPAWN_USER', 15, this.user_hidden[i]);
         this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
         delete this.user_hidden[i];
       }
