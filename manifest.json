@@ -1,9 +1,9 @@
 {
 	"files": {
-		"README.md": "087b9a3c29c0bb18d45ce4428569b91fc131834c64e5c2f7de9889bd991798b3",
-		"index.js": "8e6be1ea358f6bfb024a3e05ae92c9229fbb24c35d92135a437e64cab06da4ef",
-		"module.json": "68b1ffe73c65f06febd22e78d60dc68faf1a49fbcbc22ad1430c51bf586121c1",
-		"settings.js": "a4bdfe7b6681265861f90e57eec822e3c8c5105f28ffe268d8a419b9f1e10ef8"
+		"README.md": "74a4bdbba92ae5f33c6b64c1d7a1687872a32d784e162c265093126c5e2d10a9",
+		"index.js": "71eb548799b0ed6bab54a80787d6a87f2eb146bd8cfc2b310acaa08bd611c336",
+		"module.json": "382b290350fa06632b43e23e7f2fffff0ca211de0b4ce2eacfec335241c94c7c",
+		"settings.js": "a9909118b3ca106776f44fdd735712c11042351aff6f4a1fab598f791b44f638"
 	},
 	"defs": {
 		"S_ABNORMALITY_BEGIN": 3,
@@ -24,7 +24,7 @@
 		"S_REQUEST_SPAWN_SERVANT": 1,
 		"S_SPAWN_NPC": 11,
 		"S_SPAWN_PROJECTILE": [5,6],
-		"S_SPAWN_USER": 14,
+		"S_SPAWN_USER": [14,15],
 		"S_START_USER_PROJECTILE": 9,
 		"S_UNMOUNT_VEHICLE": 2,
 		"S_USER_LOCATION": 5

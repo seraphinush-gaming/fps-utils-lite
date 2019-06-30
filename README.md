@@ -23,6 +23,8 @@ Support seraph via paypal donations, thanks in advance !
 ## Usage
 - __`fps`__
 ### Arguments
+- __`all`__
+  - Show all users
 - __`fireworks`__
   - Toggle fireworks hide/show
 - __`guild`__
@@ -36,6 +38,8 @@ Support seraph via paypal donations, thanks in advance !
   - `1` : Set mode to 1, with projectiles hidden
   - `2` : Set mode to 2, with additional skill effects hidden
   - `3` : Set mode to 3, with additional players hidden
+- __`on`__
+- __`off`__
 - __`party`__
   - Toggle party members hide/show
 - __`proj`__
@@ -69,6 +73,10 @@ Support seraph via paypal donations, thanks in advance !
 ## Changelog
 <details>
 
+    1.04
+    - Added `all` option
+    - Added `off` option
+    - Added `on` option
     1.03
     - Fixed issue where S_SPAWN_USER could not load party members
     1.02

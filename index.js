@@ -8,6 +8,7 @@ class FpsUtilsLite {
     this.cmd = mod.command;
     this.settings = mod.settings;
     this.hooks = [];
+    this.loaded = false;
 
     this.myGameId = BigInt(0);
     this.myGuild = new Set();
@@ -23,6 +24,12 @@ class FpsUtilsLite {
     this.servant_hidden = {};
 
     this.cmd.add('fps', {
+      'all': () => {
+        this.settings.guild = false;
+        this.settings.party = false;
+        await this.showAll();
+        this.send(`Showing all users`);
+      },
       'fireworks': () => {
         this.settings.hideFireworks = !this.settings.hideFireworks;
         this.send(`Hiding of firework effects ${this.settings.hideFireworks ? 'en' : 'dis'}abled`);
@@ -88,6 +95,19 @@ class FpsUtilsLite {
             this.send(`Invalid argument. usage : fps mode [0|1|2|3]`);
         }
       },
+      'off': () => {
+        if (this.loaded) {
+          this.load();
+          this.send(`Removed all necessary hooks.`);
+        }
+      },
+      'on': () => {
+        if (!this.loaded) {
+          await this.showAll();
+          this.unload();
+          this.send(`Loaded all necessary hooks.`);
+        }
+      },
       'party': () => {
         this.settings.party = !this.settings.party
         this.handleHideUser();
@@ -130,7 +150,7 @@ class FpsUtilsLite {
         }
       },
       '$default': () => {
-        this.send(`Invalid argument. uasge : fps [fireworks|hit|guild|hit|mode|party|proj|refresh|servant|status|summons]`);
+        this.send(`Invalid argument. uasge : fps [all|fireworks|hit|guild|hit|mode|off|on|party|proj|refresh|servant|status|summons]`);
       }
     });
 
@@ -170,10 +190,12 @@ class FpsUtilsLite {
     this.npc_hidden = undefined;
     this.party_list = undefined;
     this.user_hidden = undefined;
+    this.user_shown = undefined;
     this.user_list = undefined;
     this.myGuild = undefined;
     this.myGameId = undefined;
 
+    this.loaded = undefined;
     this.hooks = undefined;
     this.settings = undefined;
     this.cmd = undefined;
@@ -193,7 +215,7 @@ class FpsUtilsLite {
       await this.showGuild();
     }
     if (this.settings.mode < 3 && !this.settings.guild && !this.settings.party) {
-      this.showAll();
+      await this.showAll();
     }
   }
 
@@ -226,12 +248,15 @@ class FpsUtilsLite {
   }
 
   showAll() {
-    for (let i in this.user_hidden) {
-      this.mod.send('S_SPAWN_USER', 14, this.user_hidden[i]);
-      this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
-      delete this.user_hidden[i];
-    }
-    this.user_hidden = {};
+    return new Promise((resolve) => {
+      for (let i in this.user_hidden) {
+        this.mod.send('S_SPAWN_USER', 14, this.user_hidden[i]);
+        this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
+        delete this.user_hidden[i];
+      }
+      this.user_hidden = {};
+      resolve();
+    });
   }
 
   hideAll() {
@@ -267,7 +292,7 @@ class FpsUtilsLite {
 
   load() {
     // user
-    this.hook('S_SPAWN_USER', 14, { order: -10 }, (e) => {
+    this.hook('S_SPAWN_USER', 15, { order: -10 }, (e) => {
       this.user_list[e.gameId] = e;
       if (this.settings.mode === 3) {
         this.user_hidden[e.gameId] = e;
@@ -432,6 +457,8 @@ class FpsUtilsLite {
         return false;
       }
     });
+
+    this.loaded = true;
   }
 
   unload() {
@@ -440,6 +467,8 @@ class FpsUtilsLite {
         this.mod.unhook(h);
       this.hooks = [];
     }
+
+    this.loaded = false;
   }
 
   send() { this.cmd.message(': ' + [...arguments].join('\n\t - ')); }
