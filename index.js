@@ -27,7 +27,7 @@ class FpsUtilsLite {
       'all': () => {
         this.settings.guild = false;
         this.settings.party = false;
-        await this.showAll();
+        this.showAll();
         this.send(`Showing all users`);
       },
       'fireworks': () => {
@@ -103,7 +103,7 @@ class FpsUtilsLite {
       },
       'on': () => {
         if (!this.loaded) {
-          await this.showAll();
+          this.showAll();
           this.unload();
           this.send(`Loaded all necessary hooks.`);
         }
@@ -215,7 +215,7 @@ class FpsUtilsLite {
       await this.showGuild();
     }
     if (this.settings.mode < 3 && !this.settings.guild && !this.settings.party) {
-      await this.showAll();
+      this.showAll();
     }
   }
 
