@@ -6,6 +6,7 @@ class FpsUtilsLite {
 
     this.mod = mod;
     this.cmd = mod.command;
+    this.game = mod.game;
     this.settings = mod.settings;
     this.hooks = [];
     this.loaded = false;
@@ -97,14 +98,14 @@ class FpsUtilsLite {
       },
       'off': () => {
         if (this.loaded) {
-          this.load();
+          this.unload();
           this.send(`Removed all necessary hooks.`);
         }
       },
       'on': () => {
         if (!this.loaded) {
           this.showAll();
-          this.unload();
+          this.load();
           this.send(`Loaded all necessary hooks.`);
         }
       },
@@ -155,7 +156,21 @@ class FpsUtilsLite {
     });
 
     // game state
-    this.mod.hook('S_LOGIN', this.mod.majorPatchVersion >= 81 ? 13 : 12, { order: -1000 }, (e) => {
+    this.game.on('enter_game', () => {
+      this.myGameId = this.game.me.gameId;
+    });
+
+    this.game.me.on('change_zone', () => {
+      this.user_list = {};
+      this.user_shown = {};
+      this.user_hidden = {};
+
+      this.npc_hidden = {};
+
+      this.servant_hidden = {};
+    });
+
+    /* this.mod.hook('S_LOGIN', this.mod.majorPatchVersion >= 81 ? 13 : 12, { order: -1000 }, (e) => {
       this.myGameId = e.gameId;
     });
 
@@ -167,9 +182,9 @@ class FpsUtilsLite {
       this.npc_hidden = {};
 
       this.servant_hidden = {};
-    });
+    }); */
 
-    this.mod.hookOnce('S_GET_USER_LIST', 15, { order: -1000 }, (e) => {
+    this.mod.hookOnce('S_GET_USER_LIST', this.mod.majorPatchVersion >= 85 ? 0 : 15, { order: -1000 }, (e) => {
       e.characters.forEach((c) => {
         this.myGuild.add(c.guildName);
       });
@@ -198,6 +213,7 @@ class FpsUtilsLite {
     this.loaded = undefined;
     this.hooks = undefined;
     this.settings = undefined;
+    this.game = undefined;
     this.cmd = undefined;
     this.mod = undefined;
   }
@@ -317,6 +333,16 @@ class FpsUtilsLite {
       delete this.user_list[e.gameId];
       delete this.user_shown[e.gameId];
       delete this.user_hidden[e.gameId];
+    });
+
+    this.hook('S_USER_LOCATION', 5, { order: 1000 }, (e) => {
+      if (this.user_list[e.gameId]) {
+        this.user_list[e.gameId].loc = e.dest;
+      }
+
+      if (this.user_hidden[e.gameId]) {
+        return false;
+      }
     });
 
     // party
@@ -500,6 +526,4 @@ class FpsUtilsLite {
 
 }
 
-module.exports = function FpsUtilsLiteLoader(mod) {
-  return new FpsUtilsLite(mod);
-}
+module.exports = FpsUtilsLite;

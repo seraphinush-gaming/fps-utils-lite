@@ -73,6 +73,8 @@ Support seraph via paypal donations, thanks in advance !
 ## Changelog
 <details>
 
+    1.05
+    - Incorporated `tera-game-state`
     1.04
     - Added `all` option
     - Added `off` option
