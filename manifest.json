@@ -1,8 +1,8 @@
 {
 	"files": {
 		"README.md": "fb70cef95b52b28d30e3b3c0911764bee737e2c96070e9972852616e140fda8c",
-		"index.js": "3e38e541c1f5f7f1f1b016559538a0bd6d9ee9e9d1b3559a153e53e8b0b034df",
-		"module.json": "ac1278775bc0aee4d323dcd0083a49bfe8b24c91cb61d542e79405d426370e53",
+		"index.js": "d8277262735d96fc7f01a54f2781eb380ec70fd1eaff88abc7fd366aa0ee729c",
+		"module.json": "5b65ea68f7a535dbf9aacb62ec068622d2c040d4fe5533589a75a067b0042a72",
 		"settings.js": "a9909118b3ca106776f44fdd735712c11042351aff6f4a1fab598f791b44f638"
 	},
 	"defs": {
@@ -12,9 +12,9 @@
 		"S_DESPAWN_NPC": 3,
 		"S_DESPAWN_USER": 3,
 		"S_EACH_SKILL_RESULT": 13,
-		"S_FEARMOVE_END": 1,
-		"S_FEARMOVE_STAGE": 1,
-		"S_GET_USER_LIST": 15,
+		"S_FEARMOVE_END": 2,
+		"S_FEARMOVE_STAGE": 2,
+		"S_GET_USER_LIST": [15,16],
 		"S_LEAVE_PARTY": 1,
 		"S_MOUNT_VEHICLE": 2,
 		"S_PARTY_MEMBER_LIST": 8,

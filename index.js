@@ -17,11 +17,8 @@ class FpsUtilsLite {
     this.user_list = {};
     this.user_shown = {};
     this.user_hidden = {};
-
     this.party_list = [];
-
     this.npc_hidden = {};
-
     this.servant_hidden = {};
 
     this.cmd.add('fps', {
@@ -55,7 +52,7 @@ class FpsUtilsLite {
             this.send(`Hiding of other players skill hits ${this.settings.hitOther ? 'en' : 'dis'}abled`);
             break;
           default:
-            this.send(`Invalid argument. uasge : fps hit [damage|me|other]`);
+            this.send(`Invalid argument. usage : fps hit [damage|me|other]`);
             break;
         }
       },
@@ -131,10 +128,10 @@ class FpsUtilsLite {
           `mode : ${this.settings.mode}`,
           `guild : ${this.settings.guild}`,
           `party : ${this.settings.party}`,
-          `servants : ${this.settings.hideServants}`,
-          `summons : ${this.settings.hideAllSummons}`,
+          `fireworks : ${this.settings.hideFireworks}`),
           `projectiles : ${this.settings.hideProjectiles}`,
-          `fireworks : ${this.settings.hideFireworks}`);
+          `servants : ${this.settings.hideServants}`,
+          `summons : ${this.settings.hideAllSummons}`
       },
       'summons': (arg) => {
         switch (arg) {
@@ -151,7 +148,7 @@ class FpsUtilsLite {
         }
       },
       '$default': () => {
-        this.send(`Invalid argument. uasge : fps [all|fireworks|hit|guild|hit|mode|off|on|party|proj|refresh|servant|status|summons]`);
+        this.send(`Invalid argument. usage : fps [all|fireworks|hit|guild|hit|mode|off|on|party|proj|refresh|servant|status|summons]`);
       }
     });
 
@@ -170,21 +167,12 @@ class FpsUtilsLite {
       this.servant_hidden = {};
     });
 
-    /* this.mod.hook('S_LOGIN', this.mod.majorPatchVersion >= 81 ? 13 : 12, { order: -1000 }, (e) => {
-      this.myGameId = e.gameId;
-    });
-
-    this.mod.hook('S_LOAD_TOPO', 'raw', { order: -1000 }, () => {
-      this.user_list = {};
-      this.user_shown = {};
-      this.user_hidden = {};
-
-      this.npc_hidden = {};
-
-      this.servant_hidden = {};
-    }); */
-
-    this.mod.hookOnce('S_GET_USER_LIST', this.mod.majorPatchVersion >= 85 ? 0 : 15, { order: -1000 }, (e) => {
+    // 
+    // 15 : < v85
+    // 16 : v85
+    // 0 : v86
+    //
+    this.mod.hookOnce('S_GET_USER_LIST', (this.mod.majorPatchVersion >= 86) ? 0 : (this.mod.majorPatchVersion === 85 ? 16 : 15), { order: -1000 }, (e) => {
       e.characters.forEach((c) => {
         this.myGuild.add(c.guildName);
       });
@@ -196,10 +184,8 @@ class FpsUtilsLite {
 
   destructor() {
     this.mod.saveSettings();
-
-    this.unload();
-
     this.cmd.remove('fps');
+    this.unload();
 
     this.servant_hidden = undefined;
     this.npc_hidden = undefined;
@@ -390,7 +376,7 @@ class FpsUtilsLite {
       delete this.servant_hidden[e.gameId];
     });
 
-    //
+    // mount
     this.hook('S_MOUNT_VEHICLE', 2, (e) => {
       if (this.user_hidden[e.gameId]) {
         this.user_hidden[e.gameId].mount = e.id;
@@ -445,16 +431,16 @@ class FpsUtilsLite {
       }
     });
 
-    //
-    this.hook('S_FEARMOVE_STAGE', 1, (e) => {
-      if ((this.settings.mode === 3 && this.myGameId !== e.target) ||
+    // fear
+    this.hook('S_FEARMOVE_STAGE', 2, (e) => {
+      if ((this.settings.mode === 3 && this.myGameId !== e.gameId) ||
         this.user_hidden[e.target] ||
         this.npc_hidden[e.target]) {
         return false;
       }
     });
-    this.hook('S_FEARMOVE_END', 1, (e) => {
-      if ((this.settings.mode === 3 && this.myGameId !== e.target) ||
+    this.hook('S_FEARMOVE_END', 2, (e) => {
+      if ((this.settings.mode === 3 && this.myGameId !== e.gameId) ||
         this.user_hidden[e.target] ||
         this.npc_hidden[e.target]) {
         return false;
