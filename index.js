@@ -434,15 +434,15 @@ class FpsUtilsLite {
     // fear
     this.hook('S_FEARMOVE_STAGE', 2, (e) => {
       if ((this.settings.mode === 3 && this.myGameId !== e.gameId) ||
-        this.user_hidden[e.target] ||
-        this.npc_hidden[e.target]) {
+        this.user_hidden[e.gameId] ||
+        this.npc_hidden[e.gameId]) {
         return false;
       }
     });
     this.hook('S_FEARMOVE_END', 2, (e) => {
       if ((this.settings.mode === 3 && this.myGameId !== e.gameId) ||
-        this.user_hidden[e.target] ||
-        this.npc_hidden[e.target]) {
+        this.user_hidden[e.gameId] ||
+        this.npc_hidden[e.gameId]) {
         return false;
       }
     });
