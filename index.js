@@ -167,12 +167,7 @@ class FpsUtilsLite {
       this.servant_hidden = {};
     });
 
-    // 
-    // 15 : < v85
-    // 16 : v85
-    // 0 : v86
-    //
-    this.mod.hookOnce('S_GET_USER_LIST', (this.mod.majorPatchVersion >= 86) ? 0 : (this.mod.majorPatchVersion === 85 ? 16 : 15), { order: -1000 }, (e) => {
+    this.mod.hookOnce('S_GET_USER_LIST', this.mod.majorPatchVersion >= 86 ? 0 : 16, { order: -1000 }, (e) => {
       e.characters.forEach((c) => {
         this.myGuild.add(c.guildName);
       });
@@ -365,7 +360,7 @@ class FpsUtilsLite {
     });
 
     // servant
-    this.hook('S_REQUEST_SPAWN_SERVANT', 1, { order: -10 }, (e) => {
+    this.hook('S_REQUEST_SPAWN_SERVANT', 3, { order: -10 }, (e) => {
       if (this.settings.hideServants && this.myGameId !== e.ownerId) {
         this.servant_hidden[e.gameId] = e;
         return false;
@@ -447,9 +442,10 @@ class FpsUtilsLite {
       }
     });
 
-    /* this.hook('S_USER_MOVETYPE', 'raw', () => {
+    // user movetype
+    this.hook('S_USER_MOVETYPE', 'raw', () => {
       return false;
-    }); */
+    });
 
     // proj
     this.hook('S_START_USER_PROJECTILE', 9, { order: 999 }, (e) => {
