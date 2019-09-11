@@ -327,7 +327,7 @@ class FpsUtilsLite {
     });
 
     // party
-    this.hook('S_PARTY_MEMBER_LIST', 8, (e) => {
+    this.hook('S_PARTY_MEMBER_LIST', this.mod.majorPatchVersion >= 86 ? 0 : 8, (e) => {
       e.members.forEach((m) => {
         this.party_list.push(m.name);
       });
