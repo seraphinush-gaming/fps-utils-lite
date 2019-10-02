@@ -45,7 +45,7 @@ class FpsUtilsLite {
             break;
           case "me":
             this.settings.hitMe = !this.settings.hitMe;
-            this.send(`Hiding of the players skill hits ${this.settings.hitMe ? 'en' : 'dis'}abled`);
+            this.send(`Hiding of the player's skill hits ${this.settings.hitMe ? 'en' : 'dis'}abled`);
             break;
           case "other":
             this.settings.hitOther = !this.settings.hitOther;
@@ -161,9 +161,7 @@ class FpsUtilsLite {
       this.user_list = {};
       this.user_shown = {};
       this.user_hidden = {};
-
       this.npc_hidden = {};
-
       this.servant_hidden = {};
     });
 
@@ -174,6 +172,11 @@ class FpsUtilsLite {
     });
 
     this.load();
+
+    // user movetype
+    this.mod.tryHook('S_USER_MOVETYPE', 'raw', () => {
+      return false;
+    });
 
   }
 
@@ -440,11 +443,6 @@ class FpsUtilsLite {
         this.npc_hidden[e.gameId]) {
         return false;
       }
-    });
-
-    // user movetype
-    this.hook('S_USER_MOVETYPE', 'raw', () => {
-      return false;
     });
 
     // proj
