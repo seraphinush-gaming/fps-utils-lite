@@ -1,8 +1,8 @@
 {
 	"files": {
 		"README.md": "fb70cef95b52b28d30e3b3c0911764bee737e2c96070e9972852616e140fda8c",
-		"index.js": "def17ace918283769eaef7092c88c0ad762d94d14da9ad086df1afdc61a7fa0b",
-		"module.json": "200c7d4a3a47297aa68d13e6d152427ffc6d99dc7a2618665b949b0ec9d5c0a3",
+		"index.js": "0669c13ba12aae833191a6d576f86e392d65c33a9de323306541ed71f27fec59",
+		"module.json": "4c3984f0e9c8ace93a8363d13c56a742da6e441b8d8fb8307d42a43fe2db5f47",
 		"settings.js": "a9909118b3ca106776f44fdd735712c11042351aff6f4a1fab598f791b44f638"
 	},
 	"defs": {
@@ -25,7 +25,6 @@
 		"S_SPAWN_USER": 15,
 		"S_START_USER_PROJECTILE": 9,
 		"S_UNMOUNT_VEHICLE": 2,
-		"S_USER_LOCATION": 5,
-		"S_USER_MOVETYPE": "raw"
+		"S_USER_LOCATION": 5
 	}
 }
