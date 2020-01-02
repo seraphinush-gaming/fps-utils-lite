@@ -1,13 +1,13 @@
 {
 	"files": {
 		"README.md": "fb70cef95b52b28d30e3b3c0911764bee737e2c96070e9972852616e140fda8c",
-		"index.js": "0669c13ba12aae833191a6d576f86e392d65c33a9de323306541ed71f27fec59",
-		"module.json": "4c3984f0e9c8ace93a8363d13c56a742da6e441b8d8fb8307d42a43fe2db5f47",
-		"settings.js": "a9909118b3ca106776f44fdd735712c11042351aff6f4a1fab598f791b44f638"
+		"index.js": "de6ffd01143aa5760e6675b2688bd84ddf9032afedc663a6153b596f70e14f80",
+		"module.json": "c26c61bc63c71d9df498c129eb6540725136d856f5a1125fd64bc70e5fc5e65d",
+		"settings.js": "216c4dfb124f7aab840da82d7b0811b69ed7045fc8c17ec1e279a42f6b7861f2"
 	},
 	"defs": {
-		"S_ABNORMALITY_BEGIN": 3,
-		"S_ABNORMALITY_REFRESH": 1,
+		"S_ABNORMALITY_BEGIN": 4,
+		"S_ABNORMALITY_REFRESH": 2,
 		"S_ACTION_STAGE": 9,
 		"S_DESPAWN_NPC": 3,
 		"S_DESPAWN_USER": 3,

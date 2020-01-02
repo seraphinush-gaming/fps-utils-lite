@@ -4,14 +4,14 @@ const DefaultSettings = {
   "mode": 0,
   "guild": false,
   "party": false,
-  "hideFireworks": false,
-  "hideAllSummons": false,
-  "keepMySummons": true,
-  "hideProjectiles": false,
-  "hideServants": false,
-  "hitMe": false,
-  "hitOther": true,
-  "hitDamage": false
+  "hide_fireworks": false,
+  "hide_all_summons": false,
+  "hide_my_summons": false,
+  "hide_projectiles": false,
+  "hide_servants": false,
+  "hit_me": false,
+  "hit_other": true,
+  "hit_damage": false
 };
 
 function MigrateSettings(from_ver, to_ver, settings) {
@@ -26,7 +26,24 @@ function MigrateSettings(from_ver, to_ver, settings) {
     }
   
     switch (to_ver) {
-      //
+      case 2:
+        settings.hide_fireworks = settings.hideFireworks;
+        settings.hide_all_summons = settings.hideAllSummons;
+        settings.hide_my_summons = !settings.keepMySummons;
+        settings.hide_projectiles = settings.hideProjectiles;
+        settings.hide_servants = settings.hideServants;
+        settings.hit_me = settings.hitMe;
+        settings.hit_other = settings.hitOther;
+        settings.hit_damage = settings.hitDamage;
+        delete settings.hideFireworks;
+        delete settings.hideAllSummons;
+        delete settings.keepMySummons;
+        delete settings.hideProjectiles;
+        delete settings.hideServants;
+        delete settings.hitMe;
+        delete settings.hitOther;
+        delete settings.hitDamage;
+        break;
     }
 
     return settings;
