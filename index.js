@@ -28,6 +28,43 @@ class fps_utils_lite {
         this.show_all();
         this.send(`Showing all users.`);
       },
+      'dropitem': {
+        'add': async (id) => {
+          if (id) {
+            (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatlink_id(id);
+            this.s.dropitem_list.push(id);
+            this.send(`Added &lt;${this.g.data.items.get(id).name}&gt; to dropitem list.`);
+          }
+          else {
+            this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`);
+          }
+        },
+        'list': () => {
+          this.m.log(`Dropitem list :`);
+          this.s.dropitem_list.sort();
+          this.s.dropitem_list.forEach((item) => {
+            console.log('- ' + item + ' : ' + (this.g.data.items.get(item) ? this.g.data.items.get(item).name : 'undefined'));
+          });
+          this.send(`Exported dropitem list to console.`);
+        },
+        'rm': async (id) => {
+          if (id) {
+            (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatlink_id(id);
+            this.s.dropitem_list.splice(this.s.dropitem_list.indexOf(id), 1);
+            this.send(`Removed &lt;${this.g.data.items.get(id).name}&gt; from dropitem list.`);
+          }
+          else {
+            this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`);
+          }
+        },
+        '$default': () => {
+          this.send(`Invalid argument. usage : fps dropitem [add|list|rm]`);
+        }
+      },
+      'deathanim': () => {
+        this.s.hide_death_anim = !this.s.hide_death_anim;
+        this.send(`Hiding of death animation ${this.s.hide_death_anim ? 'en' : 'dis'}abled.`);
+      },
       'fireworks': () => {
         this.s.hide_fireworks = !this.s.hide_fireworks;
         this.send(`Hiding of firework effects ${this.s.hide_fireworks ? 'en' : 'dis'}abled.`);
@@ -251,6 +288,15 @@ class fps_utils_lite {
     });
   }
 
+  get_chatlink_id(chatLink) {
+    return new Promise((resolve) => {
+      let regex_id = /#(\d+)@/;
+      let res = chatLink.match(regex_id);
+      res = parseInt(res[1]);
+      resolve(res);
+    });
+  }
+
   update_user_loc(e) {
     this.m.send('S_USER_LOCATION', 5, {
       gameId: e.gameId,
@@ -309,7 +355,7 @@ class fps_utils_lite {
       });
     });
 
-    this.hook('S_LEAVE_PARTY', 1, () => {
+    this.hook('S_LEAVE_PARTY', 'event', { order: 10 }, () => {
       this.party_list = [];
       this.handle_hide_user();
     });
@@ -329,33 +375,37 @@ class fps_utils_lite {
       }
     });
 
-    this.hook('S_DESPAWN_NPC', 3, (e) => {
+    this.hook('S_DESPAWN_NPC', 3, { order: -10 }, (e) => {
       delete this.npc_hidden[e.gameId];
+      if (this.s.hide_death_anim && e.type == 5) {
+        e.type = 1;
+        return true;
+      }
     });
 
     // servant
-    this.hook('S_REQUEST_SPAWN_SERVANT', 3, { order: -10 }, (e) => {
+    this.hook('S_REQUEST_SPAWN_SERVANT', 3, { order: 10 }, (e) => {
       if (this.s.hide_servants && this.gameId !== e.ownerId) {
         this.servant_hidden[e.gameId] = e;
         return false;
       }
     });
 
-    this.hook('S_REQUEST_DESPAWN_SERVANT', 1, (e) => {
+    this.hook('S_REQUEST_DESPAWN_SERVANT', 1, { order: 10 }, (e) => {
       delete this.servant_hidden[e.gameId];
     });
 
     // mount
-    this.hook('S_MOUNT_VEHICLE', 2, (e) => {
+    this.hook('S_MOUNT_VEHICLE', 2, { order: 1000 }, (e) => {
       this.user_list[e.gameId] ? this.user_list[e.gameId].mount = e.id : null;
     });
 
-    this.hook('S_UNMOUNT_VEHICLE', 2, (e) => {
+    this.hook('S_UNMOUNT_VEHICLE', 2, { order: 1000 }, (e) => {
       this.user_list[e.gameId] ? this.user_list[e.gameId].mount = 0 : null;
     });
 
     //
-    this.hook('S_ACTION_STAGE', 9, { order: 100 }, (e) => {
+    this.hook('S_ACTION_STAGE', 9, { order: 10 }, (e) => {
       if (this.gameId !== e.gameId && this.user_list[e.gameId]) {
         if (this.s.mode === 2 || this.user_hidden[e.gameId]) {
           this.update_user_loc(e);
@@ -364,18 +414,18 @@ class fps_utils_lite {
       }
     });
 
-    this.hook('S_ABNORMALITY_BEGIN', 4, { order: 100 }, (e) => {
+    this.hook('S_ABNORMALITY_BEGIN', 4, { order: 10 }, (e) => {
       if (this.user_hidden[e.target])
         return false;
     });
 
-    this.hook('S_ABNORMALITY_REFRESH', 2, { order: 100 }, (e) => {
+    this.hook('S_ABNORMALITY_REFRESH', 2, { order: 10 }, (e) => {
       if (this.user_hidden[e.target])
         return false;
     });
 
     // hit
-    this.hook('S_EACH_SKILL_RESULT', this.m.majorPatchVersion >= 86 ? 14 : 13, { order: 100 }, (e) => {
+    this.hook('S_EACH_SKILL_RESULT', this.m.majorPatchVersion >= 86 ? 14 : 13, { order: 10 }, (e) => {
       if (this.gameId === e.source || this.gameId === e.owner) {
         if (this.s.hit_me) {
           e.skill.id = 0;
@@ -395,14 +445,14 @@ class fps_utils_lite {
     });
 
     // fear
-    this.hook('S_FEARMOVE_STAGE', 2, (e) => {
+    this.hook('S_FEARMOVE_STAGE', 2, { order: 10 }, (e) => {
       if ((this.s.mode === 3 && this.gameId !== e.gameId) ||
         this.user_hidden[e.gameId] ||
         this.npc_hidden[e.gameId]) {
         return false;
       }
     });
-    this.hook('S_FEARMOVE_END', 2, (e) => {
+    this.hook('S_FEARMOVE_END', 2, { order: 10 }, (e) => {
       if ((this.s.mode === 3 && this.gameId !== e.gameId) ||
         this.user_hidden[e.gameId] ||
         this.npc_hidden[e.gameId]) {
@@ -411,7 +461,7 @@ class fps_utils_lite {
     });
 
     // proj
-    this.hook('S_START_USER_PROJECTILE', 9, { order: 100 }, (e) => {
+    this.hook('S_START_USER_PROJECTILE', 9, { order: 10 }, (e) => {
       if (this.gameId !== e.gameId &&
         this.user_list[e.gameId] && 
         (this.s.mode > 0 || this.s.hide_projectiles)) {
@@ -425,6 +475,12 @@ class fps_utils_lite {
         (this.s.mode > 0 || this.s.hide_projectiles)) {
         return false;
       }
+    });
+
+    // dropitem
+    this.hook('S_SPAWN_DROPITEM', 8, { order: -10 }, (e) => {
+      if (this.s.hide_dropitem && this.s.dropitem_list.includes(e.item))
+        return false;
     });
 
     this.loaded = true;

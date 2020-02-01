@@ -27,6 +27,11 @@ Support seraph via paypal donations, thanks in advance !
   - Show all users
 - __`fireworks`__
   - Toggle fireworks hide/show
+- __`dropitem`__
+  - Toggle hid
+  - `add <id | chat link>` : Add `id` to dropitem list
+  - `list` : Print dropitem list in console
+  - `rm <id | chat link>` : Remove `id` from dropitem list
 - __`guild`__
   - Toggle guild members hide/show
 - __`hit`__
@@ -73,6 +78,8 @@ Support seraph via paypal donations, thanks in advance !
 ## Changelog
 <details>
 
+    1.06
+    - Added `dropitem` options
     1.05
     - Incorporated `tera-game-state`
     1.04

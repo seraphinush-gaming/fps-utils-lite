@@ -7,8 +7,17 @@ const DefaultSettings = {
   "hide_fireworks": false,
   "hide_all_summons": false,
   "hide_my_summons": false,
+  "hide_death_anim": false,
   "hide_projectiles": false,
   "hide_servants": false,
+  "hide_dropitem": false,
+  "dropitem_list": [
+    639, // speed mote
+    703, // dreamstorm, oneiric mote
+    7214, // scroll of resurrection
+    8000, 8001, 8002, 8003, 8004, 8005, // various hp and mp motes
+    91344 // fashion coupon
+  ],
   "hit_me": false,
   "hit_other": true,
   "hit_damage": false
@@ -43,6 +52,13 @@ function MigrateSettings(from_ver, to_ver, settings) {
         delete settings.hitMe;
         delete settings.hitOther;
         delete settings.hitDamage;
+        break;
+      case 3:
+        settings.hide_death_anim = false;
+        break;
+      case 4:
+        settings.hide_dropitem = false;
+        settings.dropitem_list = DefaultSettings.dropitem_list;
         break;
     }
 
