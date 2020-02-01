@@ -27,8 +27,10 @@ Support seraph via paypal donations, thanks in advance !
   - Show all users
 - __`fireworks`__
   - Toggle fireworks hide/show
+- __`deathanim`__
+  - Toggle death animation hide/show
 - __`dropitem`__
-  - Toggle hid
+  - Toggle dropitem hide/show
   - `add <id | chat link>` : Add `id` to dropitem list
   - `list` : Print dropitem list in console
   - `rm <id | chat link>` : Remove `id` from dropitem list
@@ -79,6 +81,7 @@ Support seraph via paypal donations, thanks in advance !
 <details>
 
     1.06
+    - Added `deathanim` option
     - Added `dropitem` options
     1.05
     - Incorporated `tera-game-state`
