@@ -29,6 +29,10 @@ class fps_utils_lite {
         this.send(`Showing all users.`);
       },
       'dropitem': {
+        '$none': () => {
+          this.s.hide_dropitem = !this.s.hide_dropitem;
+          this.send(`Hiding of dropitem ${this.s.hide_dropitem ? 'en' : 'dis'}abled.`);
+        },
         'add': async (id) => {
           if (id) {
             (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatlink_id(id);
