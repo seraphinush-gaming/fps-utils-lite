@@ -419,7 +419,7 @@ class fps_utils_lite {
     });
 
     // servant
-    this.hook('S_REQUEST_SPAWN_SERVANT', 3, { order: 10 }, (e) => {
+    this.hook('S_REQUEST_SPAWN_SERVANT', 4, { order: 10 }, (e) => {
       if (this.s.hide_servants && this.gameId !== e.ownerId) {
         this.servant_hidden[e.gameId] = e;
         return false;
