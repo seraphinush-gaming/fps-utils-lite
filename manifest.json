@@ -1,8 +1,8 @@
 {
 	"files": {
 		"README.md": "2f2198bc69d206492d63bbc934c0cbe05384280a33a1177be4e8d7bbdc41ccc3",
-		"index.js": "695670ebc3443d7e2ecb0f7dd30862fc229793141ca2eb5c793c0d978fd47b18",
-		"module.json": "21f9cb461abcf8a69e43b4f85aa0b4b49250f0e4ea02160753ec24824c937eb9",
+		"index.js": "078f6db27e530fcbfe43e12bd545b58817b58ad8aab179f5dbcacaa1827ebb89",
+		"module.json": "b26e59128e2f75ab85f4351a9851dd7b239ccbad0bf099cae83e6ed03b23be9a",
 		"settings.js": "b1acc0396841ef8c1f29863ce6fd5e12b1e0bd4b865b33ae246510cdaf5ffa31"
 	},
 	"defs": {
@@ -22,7 +22,7 @@
 		"S_REQUEST_SPAWN_SERVANT": 4,
 		"S_SPAWN_DROPITEM": 8,
 		"S_SPAWN_NPC": 11,
-		"S_SPAWN_PROJECTILE": [5,6],
+		"S_SPAWN_PROJECTILE": 5,
 		"S_SPAWN_USER": 15,
 		"S_START_ACTION_SCRIPT": "event",
 		"S_START_USER_PROJECTILE": 9,

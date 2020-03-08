@@ -506,7 +506,7 @@ class fps_utils_lite {
       }
     });
 
-    this.hook('S_SPAWN_PROJECTILE', this.m.majorPatchVersion >= 84 ? 6 : 5, { order: 10 }, (e) => {
+    this.hook('S_SPAWN_PROJECTILE', this.m.majorPatchVersion >= 84 ? 5 : 5, { order: 10 }, (e) => { // TODO
       if (this.gameId !== e.gameId &&
         this.user_list[e.gameId] &&
         (this.s.mode > 0 || this.s.hide_projectiles)) {
