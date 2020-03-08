@@ -35,7 +35,7 @@ class fps_utils_lite {
     this.c.add('fps', {
       'actionscript': () => {
         this.s.hide_action_script = !this.s.hide_action_script;
-        this.send(`Screen zoom script ${this.s.hide_action_script ? 'en' : 'dis'}abled.`);
+        this.send(`Hiding of screen zoom script ${this.s.hide_action_script ? 'en' : 'dis'}abled.`);
       },
       'all': () => {
         this.s.guild = this.s.party = false;
@@ -186,14 +186,9 @@ class fps_utils_lite {
         this.send(`Hiding of pets and partners ${this.s.hide_servants ? 'en' : 'dis'}abled.`);
       },
       'status': () => {
-        this.send(`Status : `,
-          `mode : ${this.s.mode}`,
-          `guild : ${this.s.guild}`,
-          `party : ${this.s.party}`,
-          `fireworks : ${this.s.hide_fireworks}`,
-          `projectiles : ${this.s.hide_projectiles}`,
-          `servants : ${this.s.hide_servants}`,
-          `summons : ${this.s.hide_all_summons}`);
+        this.m.log(`Status :`);
+        console.log(JSON.stringify(this.s, null, 2));
+        this.send(`Exported dropitem list to console.`);
       },
       'summons': (arg) => {
         switch (arg) {
@@ -210,7 +205,7 @@ class fps_utils_lite {
         }
       },
       '$default': () => {
-        this.send(`Invalid argument. usage : fps [all|fireworks|hit|guild|hit|mode|off|on|party|proj|refresh|servant|status|summons]`);
+        this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|guild|hit|mode|off|on|party|proj|refresh|servants|summons]`);
       }
     });
 
