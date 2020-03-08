@@ -23,10 +23,12 @@ Support seraph via paypal donations, thanks in advance !
 ## Usage
 - __`fps`__
 ### Arguments
+- __`actionscript`__
+  - Toggle screen zoom script hide/show
 - __`all`__
   - Show all users
-- __`fireworks`__
-  - Toggle fireworks hide/show
+- __`camerashake`__
+  - Toggle camera shake hide/show
 - __`deathanim`__
   - Toggle death animation hide/show
 - __`dropitem`__
@@ -34,6 +36,10 @@ Support seraph via paypal donations, thanks in advance !
   - `add <id | chat link>` : Add `id` to dropitem list
   - `list` : Print dropitem list in console
   - `rm <id | chat link>` : Remove `id` from dropitem list
+- __`drunkscreen`__
+  - Toggle drunk screen abnormality hide/show
+- __`fireworks`__
+  - Toggle fireworks hide/show
 - __`guild`__
   - Toggle guild members hide/show
 - __`hit`__
@@ -80,6 +86,11 @@ Support seraph via paypal donations, thanks in advance !
 ## Changelog
 <details>
 
+    1.07
+    - Added `actionscript` option
+    - Added `camerashake` option
+    - Added `drunkscreen` option
+    - Added fish aesthetic spawn block
     1.06
     - Added `deathanim` option
     - Added `dropitem` options

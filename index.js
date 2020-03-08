@@ -1,5 +1,15 @@
 'use strict';
 
+const drunk_abn = [
+  70251, 70252, 70253, 70254, 70255, 70256,
+  4850, 48732, 48734, 48735, 48736, 48737, 48738,
+  476806,
+  630201, 630202, 630411, 630511, 631002, 631003, 631201, 631202,
+  776017, 806001, 806002, 811061, 821101, 905656, 905657,
+  7102001, 45000011, 45000012, 47660800, 47660900, 47661000, 47662300,
+  999001011
+]
+
 class fps_utils_lite {
 
   constructor(mod) {
@@ -23,10 +33,23 @@ class fps_utils_lite {
     this.servant_hidden = {};
 
     this.c.add('fps', {
+      'actionscript': () => {
+        this.s.hide_action_script = !this.s.hide_action_script;
+        this.send(`Screen zoom script ${this.s.hide_action_script ? 'en' : 'dis'}abled.`);
+      },
       'all': () => {
         this.s.guild = this.s.party = false;
         this.show_all();
         this.send(`Showing all users.`);
+      },
+      'camerashake': () => {
+        this.s.hide_camera_shake = !this.s.hide_camera_shake;
+        this.handle_camera_shake();
+        this.send(`Hiding of camera shake ${this.s.hide_camera_shake ? 'en' : 'dis'}abled.`);
+      },
+      'deathanim': () => {
+        this.s.hide_death_anim = !this.s.hide_death_anim;
+        this.send(`Hiding of death animation ${this.s.hide_death_anim ? 'en' : 'dis'}abled.`);
       },
       'dropitem': {
         '$none': () => {
@@ -65,9 +88,9 @@ class fps_utils_lite {
           this.send(`Invalid argument. usage : fps dropitem [add|list|rm]`);
         }
       },
-      'deathanim': () => {
-        this.s.hide_death_anim = !this.s.hide_death_anim;
-        this.send(`Hiding of death animation ${this.s.hide_death_anim ? 'en' : 'dis'}abled.`);
+      'drunkscreen': () => {
+        this.s.hide_drunk_screen = !this.s.hide_drunk_screen;
+        this.send(`Hiding of drunk screen ${this.s.hide_drunk_screen ? 'en' : 'dis'}abled.`);
       },
       'fireworks': () => {
         this.s.hide_fireworks = !this.s.hide_fireworks;
@@ -217,6 +240,9 @@ class fps_utils_lite {
       return false;
     });
 
+    // camera shake
+    this.handle_camera_shake();
+
   }
 
   destructor() {
@@ -301,6 +327,8 @@ class fps_utils_lite {
     });
   }
 
+  handle_camera_shake() { this.m.clientInterface.configureCameraShake(!this.s.hide_camera_shake, 0.3, 0.3); }
+
   update_user_loc(e) {
     this.m.send('S_USER_LOCATION', 5, {
       gameId: e.gameId,
@@ -340,13 +368,13 @@ class fps_utils_lite {
       return false;
     });
 
-    this.hook('S_DESPAWN_USER', 3, { order: 1000 }, (e) => {
+    this.hook('S_DESPAWN_USER', 3, { order: 10 }, (e) => {
       delete this.user_list[e.gameId];
       delete this.user_shown[e.gameId];
       delete this.user_hidden[e.gameId];
     });
 
-    this.hook('S_USER_LOCATION', 5, { order: 1000 }, (e) => {
+    this.hook('S_USER_LOCATION', 5, { order: 10 }, (e) => {
       this.user_list[e.gameId] ? this.user_list[e.gameId].loc = e.dest : null;
       if (this.user_hidden[e.gameId])
         return false;
@@ -366,6 +394,9 @@ class fps_utils_lite {
 
     // npc: summons, fireworks
     this.hook('S_SPAWN_NPC', 11, { order: -10 }, (e) => {
+      if (e.templateId === 9901 && e.walkSpeed == 0 && e.runSpeed == 0)
+        return false;
+
       if (e.huntingZoneId === 1023) {
         if (this.s.hide_all_summons) {
           if (!this.s.hide_my_summons && this.gameId === e.owner) {
@@ -400,11 +431,11 @@ class fps_utils_lite {
     });
 
     // mount
-    this.hook('S_MOUNT_VEHICLE', 2, { order: 1000 }, (e) => {
+    this.hook('S_MOUNT_VEHICLE', 2, { order: 10 }, (e) => {
       this.user_list[e.gameId] ? this.user_list[e.gameId].mount = e.id : null;
     });
 
-    this.hook('S_UNMOUNT_VEHICLE', 2, { order: 1000 }, (e) => {
+    this.hook('S_UNMOUNT_VEHICLE', 2, { order: 10 }, (e) => {
       this.user_list[e.gameId] ? this.user_list[e.gameId].mount = 0 : null;
     });
 
@@ -420,6 +451,8 @@ class fps_utils_lite {
 
     this.hook('S_ABNORMALITY_BEGIN', 4, { order: 10 }, (e) => {
       if (this.user_hidden[e.target])
+        return false;
+      if (this.s.hide_drunk_screen && drunk_abn.includes(e.id))
         return false;
     });
 
@@ -467,13 +500,13 @@ class fps_utils_lite {
     // proj
     this.hook('S_START_USER_PROJECTILE', 9, { order: 10 }, (e) => {
       if (this.gameId !== e.gameId &&
-        this.user_list[e.gameId] && 
+        this.user_list[e.gameId] &&
         (this.s.mode > 0 || this.s.hide_projectiles)) {
         return false;
       }
     });
 
-    this.hook('S_SPAWN_PROJECTILE', this.m.majorPatchVersion >= 84 ? 6 : 5, { order: 100 }, (e) => {
+    this.hook('S_SPAWN_PROJECTILE', this.m.majorPatchVersion >= 84 ? 6 : 5, { order: 10 }, (e) => {
       if (this.gameId !== e.gameId &&
         this.user_list[e.gameId] &&
         (this.s.mode > 0 || this.s.hide_projectiles)) {
@@ -485,6 +518,13 @@ class fps_utils_lite {
     this.hook('S_SPAWN_DROPITEM', 8, { order: -10 }, (e) => {
       if (this.s.hide_dropitem && this.s.dropitem_list.includes(e.item))
         return false;
+    });
+
+    // action script
+    this.hook('S_START_ACTION_SCRIPT', 'event', () => {
+      if (this.s.hide_action_script) {
+        return false;
+      }
     });
 
     this.loaded = true;

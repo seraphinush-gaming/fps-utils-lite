@@ -18,6 +18,9 @@ const DefaultSettings = {
     8000, 8001, 8002, 8003, 8004, 8005, // various hp and mp motes
     91344 // fashion coupon
   ],
+  "hide_action_script": false,
+  "hide_camera_shake": false,
+  "hide_drunk_screen": false,
   "hit_me": false,
   "hit_other": true,
   "hit_damage": false
@@ -60,6 +63,10 @@ function MigrateSettings(from_ver, to_ver, settings) {
         settings.hide_dropitem = false;
         settings.dropitem_list = DefaultSettings.dropitem_list;
         break;
+      case 5:
+        settings.hide_action_script = false;
+        settings.hide_camera_shake = false;
+        settings.hide_drunk_screen = false;
     }
 
     return settings;
