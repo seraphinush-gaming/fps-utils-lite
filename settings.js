@@ -21,6 +21,7 @@ const DefaultSettings = {
   "hide_action_script": false,
   "hide_camera_shake": false,
   "hide_drunk_screen": false,
+  "hide_glm": false,
   "hit_me": false,
   "hit_other": true,
   "hit_damage": false
@@ -67,6 +68,9 @@ function MigrateSettings(from_ver, to_ver, settings) {
         settings.hide_action_script = false;
         settings.hide_camera_shake = false;
         settings.hide_drunk_screen = false;
+        break;
+      case 6:
+        settings.hide_glm = false;
     }
 
     return settings;

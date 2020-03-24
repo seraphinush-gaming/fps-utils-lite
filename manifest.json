@@ -1,9 +1,9 @@
 {
 	"files": {
-		"README.md": "2f2198bc69d206492d63bbc934c0cbe05384280a33a1177be4e8d7bbdc41ccc3",
-		"index.js": "fbfdf3541c7e2f30d7ac510dfcb0a79e4c4d37cf303b55b8d4bb140e3fa5e8f3",
-		"module.json": "13a3b8fd26a6b84eb48f71b1235bd64f71cdc3124f1abda7ec60f616c1588ade",
-		"settings.js": "b1acc0396841ef8c1f29863ce6fd5e12b1e0bd4b865b33ae246510cdaf5ffa31"
+		"README.md": "c33a47e806e109387b3da73c399b5672ca2529fda78cad927cc6111654a6b7dd",
+		"index.js": "5cd721a0ef04b95a793e8e46f24933af33507e5ba3414c6bcf306824e3137a5e",
+		"module.json": "76ee4a1d5fbf4d74b4df9ea32dc4997bc2f12143d15106195d9b523e08370086",
+		"settings.js": "424adf3997171e564f9c4e72ac13df8a47295f5340fba0ba62fd3adc8bb5d94f"
 	},
 	"defs": {
 		"S_ABNORMALITY_BEGIN": 4,
@@ -14,6 +14,7 @@
 		"S_EACH_SKILL_RESULT": [13,14],
 		"S_FEARMOVE_END": 2,
 		"S_FEARMOVE_STAGE": 2,
+		"S_FIELD_EVENT_ON_ENTER": "event",
 		"S_GET_USER_LIST": [16,17],
 		"S_LEAVE_PARTY": "event",
 		"S_MOUNT_VEHICLE": 2,
@@ -26,6 +27,7 @@
 		"S_SPAWN_USER": 15,
 		"S_START_ACTION_SCRIPT": "event",
 		"S_START_USER_PROJECTILE": 9,
+		"S_SYSTEM_MESSAGE": 1,
 		"S_UNMOUNT_VEHICLE": 2,
 		"S_USER_LOCATION": 5,
 		"S_USER_MOVETYPE": "event"

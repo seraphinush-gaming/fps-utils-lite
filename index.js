@@ -96,6 +96,10 @@ class fps_utils_lite {
         this.s.hide_fireworks = !this.s.hide_fireworks;
         this.send(`Hiding of firework effects ${this.s.hide_fireworks ? 'en' : 'dis'}abled.`);
       },
+      'glm': () => {
+        this.s.hide_glm = !this.s.hide_glm;
+        this.send(`Hiding of Guardian Legion Mission ui ${this.s.hide_glm ? 'en' : 'dis'}abled.`);
+      },
       'guild': () => {
         this.s.guild = !this.s.guild;
         this.handle_hide_user();
@@ -205,7 +209,7 @@ class fps_utils_lite {
         }
       },
       '$default': () => {
-        this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|guild|hit|mode|off|on|party|proj|refresh|servants|summons]`);
+        this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|off|on|party|proj|refresh|servants|summons]`);
       }
     });
 
@@ -322,7 +326,9 @@ class fps_utils_lite {
     });
   }
 
-  handle_camera_shake() { this.m.clientInterface.configureCameraShake(!this.s.hide_camera_shake, 0.3, 0.3); }
+  handle_camera_shake() {
+    this.m.clientInterface.configureCameraShake(!this.s.hide_camera_shake, 0.3, 0.3);
+  }
 
   update_user_loc(e) {
     this.m.send('S_USER_LOCATION', 5, {
@@ -516,9 +522,25 @@ class fps_utils_lite {
     });
 
     // action script
-    this.hook('S_START_ACTION_SCRIPT', 'event', () => {
+    this.hook('S_START_ACTION_SCRIPT', 'event', { order: -10 }, () => {
       if (this.s.hide_action_script) {
         return false;
+      }
+    });
+
+    // guardian legion mission
+    this.m.tryHook('S_FIELD_EVENT_ON_ENTER', 'event', { order: -10 }, () => {
+      if (this.s.hide_glm) return false;
+    });
+
+    this.hook('S_SYSTEM_MESSAGE', 1, { order: 10 }, (e) => {
+      if (this.s.hide_glm) {
+        let msg = this.m.parseSystemMessage(e.message);
+        switch (msg.id) {
+          case 'SMT_FIELD_EVENT_REWARD_AVAILABLE':
+            this._.send(`Completed ${msg.tokens.number} / 40 Guardian Legion Mission rewards`);
+            break;
+        }
       }
     });
 

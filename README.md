@@ -40,6 +40,8 @@ Support seraph via paypal donations, thanks in advance !
   - Toggle drunk screen abnormality hide/show
 - __`fireworks`__
   - Toggle fireworks hide/show
+- __`glm`__
+  - Toggle Guardian Mission Legion UI hide/show
 - __`guild`__
   - Toggle guild members hide/show
 - __`hit`__
@@ -71,6 +73,7 @@ Support seraph via paypal donations, thanks in advance !
 - Notable forks :
   - [Risenio's fork](https://github.com/Risenio/fps-utils)
   - [Snugglez's fork](https://github.com/Snugglez/fps-utils)
+- Notable alternative : [fps-manager by SaltyMonkey](https://github.com/SaltyMonkey/fps-manager)
 
 ## Credit
 - [Bernkastel](https://github.com/Bernkastel-0/)
@@ -86,6 +89,8 @@ Support seraph via paypal donations, thanks in advance !
 ## Changelog
 <details>
 
+    1.07
+    - Added `glm` option
     1.07
     - Added `actionscript` option
     - Added `camerashake` option
