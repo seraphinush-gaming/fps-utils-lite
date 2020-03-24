@@ -89,7 +89,7 @@ Support seraph via paypal donations, thanks in advance !
 ## Changelog
 <details>
 
-    1.07
+    1.08
     - Added `glm` option
     1.07
     - Added `actionscript` option
