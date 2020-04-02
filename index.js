@@ -538,7 +538,7 @@ class fps_utils_lite {
         let msg = this.m.parseSystemMessage(e.message);
         switch (msg.id) {
           case 'SMT_FIELD_EVENT_REWARD_AVAILABLE':
-            this._.send(`Completed ${msg.tokens.number} / 40 Guardian Legion Mission rewards`);
+            this.send(`Completed ${msg.tokens.number} / 40 Guardian Legion Mission rewards`);
             break;
         }
       }
