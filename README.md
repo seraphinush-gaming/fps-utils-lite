@@ -40,6 +40,8 @@ Support seraph via paypal donations, thanks in advance !
   - Toggle drunk screen abnormality hide/show
 - __`fireworks`__
   - Toggle fireworks hide/show
+- __`friends`__
+  - Toggle friends hide/show
 - __`glm`__
   - Toggle Guardian Mission Legion UI hide/show
 - __`guild`__
@@ -88,7 +90,8 @@ Support seraph via paypal donations, thanks in advance !
 
 ## Changelog
 <details>
-
+    1.08.05
+    - Added `friends` option
     1.08
     - Added `glm` option
     1.07

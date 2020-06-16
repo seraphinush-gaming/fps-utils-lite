@@ -29,6 +29,7 @@ class fps_utils_lite {
     this.user_shown = {};
     this.user_hidden = {};
     this.party_list = [];
+    this.friends_list = [];
     this.npc_hidden = {};
     this.servant_hidden = {};
 
@@ -38,7 +39,7 @@ class fps_utils_lite {
         this.send(`Hiding of screen zoom script ${this.s.hide_action_script ? 'en' : 'dis'}abled.`);
       },
       'all': () => {
-        this.s.guild = this.s.party = false;
+        this.s.guild = this.s.party = this.s.friends = false;
         this.show_all();
         this.send(`Showing all users.`);
       },
@@ -177,6 +178,11 @@ class fps_utils_lite {
         this.handle_hide_user();
         this.send(`Hiding of everyone but your group ${this.s.party ? 'en' : 'dis'}abled.`);
       },
+      'friends': () => {
+        this.s.friends = !this.s.friends;
+        this.handle_hide_user();
+        this.send(`Hiding of everyone but your friends ${this.s.friends ? 'en' : 'dis'}abled.`);
+      },
       'proj': () => {
         this.s.hide_projectiles = !this.s.hide_projectiles;
         this.send(`Hiding of projectile effects ${this.s.hide_projectiles ? 'en' : 'dis'}abled.`);
@@ -209,7 +215,7 @@ class fps_utils_lite {
         }
       },
       '$default': () => {
-        this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|off|on|party|proj|refresh|servants|summons]`);
+        this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|friends|glm|guild|hit|mode|off|on|party|proj|refresh|servants|summons]`);
       }
     });
 
@@ -258,7 +264,9 @@ class fps_utils_lite {
       await this.show_party();
     if (this.s.guild)
       await this.show_guild();
-    if (this.s.mode < 3 && !this.s.guild && !this.s.party)
+    if (this.s.friends)
+      await this.show_friends();
+    if (this.s.mode < 3 && !this.s.guild && !this.s.party && !this.s.friends)
       this.show_all();
   }
 
@@ -281,6 +289,20 @@ class fps_utils_lite {
       for (let i in this.user_hidden) {
         let user = this.user_hidden[i];
         if (this.party_list.includes(user.name)) {
+          this.m.send('S_SPAWN_USER', 15, user);
+          this.user_shown[user.gameId] = user;
+          delete this.user_hidden[i];
+        }
+      }
+      resolve();
+    });
+  }
+
+  show_friends() {
+    return new Promise((resolve) => {
+      for (let i in this.user_hidden) {
+        let user = this.user_hidden[i];
+        if (this.friends_list.includes(user.name)) {
           this.m.send('S_SPAWN_USER', 15, user);
           this.user_shown[user.gameId] = user;
           delete this.user_hidden[i];
@@ -362,7 +384,11 @@ class fps_utils_lite {
         this.user_shown[e.gameId] = e;
         return;
       }
-      if (!this.s.guild && !this.s.party && this.s.mode < 3) {
+      if (this.s.friends && this.friends_list.includes(e.name)) {
+        this.user_shown[e.gameId] = e;
+        return;
+      }
+      if (!this.s.guild && !this.s.party && !this.s.friends && this.s.mode < 3) {
         return;
       }
       this.user_hidden[e.gameId] = e;
@@ -386,6 +412,21 @@ class fps_utils_lite {
       e.members.forEach((m) => {
         this.party_list.push(m.name);
       });
+    });
+
+    //friends
+    this.hook('S_FRIEND_LIST', 1, (e) => {
+      e.friends.forEach((f) => {
+        this.friends_list.push(f.name);
+      });
+    });
+
+    this.hook('S_RETURN_TO_LOBBY', 1, () => {
+      this.friends_list = [];
+    });
+
+    this.hook('S_EXIT', 3, () => {
+      this.friends_list = [];
     });
 
     this.hook('S_LEAVE_PARTY', 'event', { order: 10 }, () => {
@@ -567,6 +608,7 @@ class fps_utils_lite {
       user_shown: this.user_shown,
       user_hidden: this.user_hidden,
       party_list: this.party_list,
+      friends_list: this.friends_list,
       npc_hidden: this.npc_hidden,
       servant_hidden: this.servant_hidden
     }
@@ -580,6 +622,7 @@ class fps_utils_lite {
     this.user_shown = state.user_shown;
     this.user_hidden = state.user_hidden;
     this.party_list = state.party_list;
+    this.friends_list = state.friends_list;
     this.npc_hidden = state.npc_hidden;
     this.servant_hidden = state.servant_hidden;
   }
