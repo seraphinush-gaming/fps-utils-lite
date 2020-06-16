@@ -232,7 +232,7 @@ class fps_utils_lite {
       this.servant_hidden = {};
     });
 
-    this.m.hookOnce('S_GET_USER_LIST', this.m.majorPatchVersion >= 86 ? 17 : 16, { order: -1000 }, (e) => {
+    this.m.hookOnce('S_GET_USER_LIST', this.m.majorPatchVersion >= 95 ? 18 : 17, { order: -1000 }, (e) => {
       e.characters.forEach((c) => {
         this.guild.add(c.guildName);
       });

@@ -4,6 +4,7 @@ const DefaultSettings = {
   "mode": 0,
   "guild": false,
   "party": false,
+  "friends": false,
   "hide_fireworks": false,
   "hide_all_summons": false,
   "hide_my_summons": false,

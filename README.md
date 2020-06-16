@@ -90,7 +90,7 @@ Support seraph via paypal donations, thanks in advance !
 
 ## Changelog
 <details>
-    1.08.05
+    1.09
     - Added `friends` option
     1.08
     - Added `glm` option
@@ -116,5 +116,4 @@ Support seraph via paypal donations, thanks in advance !
     - Fixed bugs
     1.00
     - Initial fork and commit
-
 </details>
