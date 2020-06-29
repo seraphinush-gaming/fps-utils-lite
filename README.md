@@ -1,5 +1,7 @@
 ### NOTE
+
 This module is a simplified version of module `fps-utils` by Saegusae, Codeagon, Risenio, et al. and does not have all the features of the full module. for the full experience, please refer to the forks of the full module below.
+
 - Support Codeagon : [![ko-fi](https://img.shields.io/badge/kofi-donate-333333.svg?colorA=F0AD4E&colorB=333333)](https://ko-fi.com/codeagon)
 - Support Saegusae : [![patreon](https://img.shields.io/badge/patreon-donate-333333.svg?colorA=E85B46&colorB=333333)](https://www.patreon.com/saegusa)
 
@@ -12,17 +14,23 @@ This module is a simplified version of module `fps-utils` by Saegusae, Codeagon,
 </p>
 
 # fps-utils-lite [![paypal](https://img.shields.io/badge/paypal-donate-333333.svg?colorA=253B80&colorB=333333)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=B7QQJZV9L5P2J&source=url) [![paypal.me](https://img.shields.io/badge/paypal.me-donate-333333.svg?colorA=169BD7&colorB=333333)](https://www.paypal.me/seraphinush)
+
 tera-toolbox module to help increase fps
+
 ```
 Support seraph via paypal donations, thanks in advance !
 ```
 
 ## Auto-update guide
+
 - Create a folder called `fps-utils-lite` in `tera-toolbox/mods` and download >> [`module.json`](https://raw.githubusercontent.com/seraphinush-gaming/fps-utils-lite/master/module.json) << (right-click this link and save link as..) into the folder
 
 ## Usage
+
 - __`fps`__
+
 ### Arguments
+
 - __`actionscript`__
   - Toggle screen zoom script hide/show
 - __`all`__
@@ -46,6 +54,8 @@ Support seraph via paypal donations, thanks in advance !
   - Toggle Guardian Mission Legion UI hide/show
 - __`guild`__
   - Toggle guild members hide/show
+- __`hide`__
+  - Toggle friends, party, and guild hide/show
 - __`hit`__
   - `damage` : Toggle user skill damage numbers hide/show
   - `me` : Toggle user skill hits hide/show

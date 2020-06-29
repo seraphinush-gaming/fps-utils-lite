@@ -130,7 +130,7 @@ class fps_utils_lite {
         switch (arg) {
           case '0':
             this.s.mode = 0;
-            this.s.guild = this.s.hit_other = this.s.party = false;
+            this.s.guild = this.s.hit_other = this.s.party = this.s.friends = false;
             this.handle_hide_user();
             this.send(`FPS mode set to 0, all FPS improvements disabled.`);
             break;
@@ -172,6 +172,17 @@ class fps_utils_lite {
           this.load();
           this.send(`Loaded all necessary hooks.`);
         }
+      },
+      'hide': () => {
+        if (this.s.guild == this.s.party == this.s.friends) {
+          this.s.guild = !this.s.guild;
+          this.s.friends = !this.s.friends;
+          this.s.party = !this.s.party;
+        } else {
+          this.s.guild = this.s.hit_other = this.s.party = this.s.friends = true;
+        }
+        this.handle_hide_user();
+        this.send(`Hiding of everyone but party, friends, and guild ${this.s.party && this.s.friends && this.s.guild ? 'en' : 'dis'}abled.`);
       },
       'party': () => {
         this.s.party = !this.s.party
@@ -215,7 +226,7 @@ class fps_utils_lite {
         }
       },
       '$default': () => {
-        this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|friends|glm|guild|hit|mode|off|on|party|proj|refresh|servants|summons]`);
+        this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|friends|glm|guild|hit|hide|mode|off|on|party|proj|refresh|servants|summons]`);
       }
     });
 

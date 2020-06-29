@@ -1,8 +1,38 @@
 {
-  "files": {
-    "README.md": "35ba8854c00ff1c9c6dbadd78ad43cbe29bcc1b64b146f8ff63f169208825026",
-    "index.js": "c64f0d7cfd2434aa71e2303e599eb69326fde1a9939741069282a33fa4210937",
-    "module.json": "72494cfd4e3cc4d60d0f5fa95845515ac664d13dd6c8d744527bf29e79652d11",
-    "settings.js": "6a3fdb1a991a7197bd2ef6faf14ce8b1af27342147b8c5afbd8cdba74c3c1a1c"
-  }
+	"files": {
+		"README.md": "0742823c71b4c2c59aa8de130a88dc79107bdc07c1d6c076ba5d722614531a2f",
+		"index.js": "e1e91e413430cf46dce9541be569a60a863bc8778ddbb1a6eb1dea2afb2959bc",
+		"module.json": "72494cfd4e3cc4d60d0f5fa95845515ac664d13dd6c8d744527bf29e79652d11",
+		"settings.js": "6a3fdb1a991a7197bd2ef6faf14ce8b1af27342147b8c5afbd8cdba74c3c1a1c"
+	},
+	"defs": {
+		"S_ABNORMALITY_BEGIN": 4,
+		"S_ABNORMALITY_REFRESH": 2,
+		"S_ACTION_STAGE": 9,
+		"S_DESPAWN_NPC": 3,
+		"S_DESPAWN_USER": 3,
+		"S_EACH_SKILL_RESULT": [13,14],
+		"S_EXIT": 3,
+		"S_FEARMOVE_END": 2,
+		"S_FEARMOVE_STAGE": 2,
+		"S_FIELD_EVENT_ON_ENTER": "event",
+		"S_FRIEND_LIST": 1,
+		"S_GET_USER_LIST": [17,18],
+		"S_LEAVE_PARTY": "event",
+		"S_MOUNT_VEHICLE": 2,
+		"S_PARTY_MEMBER_LIST": 7,
+		"S_REQUEST_DESPAWN_SERVANT": 1,
+		"S_REQUEST_SPAWN_SERVANT": 4,
+		"S_RETURN_TO_LOBBY": 1,
+		"S_SPAWN_DROPITEM": 8,
+		"S_SPAWN_NPC": 11,
+		"S_SPAWN_PROJECTILE": 5,
+		"S_SPAWN_USER": 15,
+		"S_START_ACTION_SCRIPT": "event",
+		"S_START_USER_PROJECTILE": 9,
+		"S_SYSTEM_MESSAGE": 1,
+		"S_UNMOUNT_VEHICLE": 2,
+		"S_USER_LOCATION": 5,
+		"S_USER_MOVETYPE": "event"
+	}
 }
