@@ -62,9 +62,7 @@ class fps_utils_lite {
             this.s.dropitem_list.push(id);
             this.send(`Added &lt;${this.g.data.items.get(id).name}&gt; to dropitem list.`);
           }
-          else {
-            this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`);
-          }
+          else { this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`); }
         },
         'list': () => {
           this.m.log(`Dropitem list :`);
@@ -80,9 +78,7 @@ class fps_utils_lite {
             this.s.dropitem_list.splice(this.s.dropitem_list.indexOf(id), 1);
             this.send(`Removed &lt;${this.g.data.items.get(id).name}&gt; from dropitem list.`);
           }
-          else {
-            this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`);
-          }
+          else { this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`); }
         },
         '$default': () => {
           this.send(`Invalid argument. usage : fps dropitem [add|list|rm]`);
@@ -208,9 +204,7 @@ class fps_utils_lite {
             this.send(`Invalid argument. usage : fps summons [mine]`);
         }
       },
-      '$default': () => {
-        this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|off|on|party|proj|refresh|servants|summons]`);
-      }
+      '$default': () => { this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|off|on|party|proj|refresh|servants|summons]`); }
     });
 
     // game state
@@ -226,7 +220,7 @@ class fps_utils_lite {
       this.servant_hidden = {};
     });
 
-    this.m.hookOnce('S_GET_USER_LIST', this.m.majorPatchVersion >= 86 ? 17 : 16, { order: -1000 }, (e) => {
+    this.m.hookOnce('S_GET_USER_LIST', this.m.majorPatchVersion >= 95 ? 18 : 17, { order: -10 }, (e) => {
       e.characters.forEach((c) => {
         this.guild.add(c.guildName);
       });
@@ -484,33 +478,25 @@ class fps_utils_lite {
 
     // fear
     this.hook('S_FEARMOVE_STAGE', 2, { order: 10 }, (e) => {
-      if ((this.s.mode === 3 && this.gameId !== e.gameId) ||
-        this.user_hidden[e.gameId] ||
-        this.npc_hidden[e.gameId]) {
+      if ((this.s.mode === 3 && this.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId]) {
         return false;
       }
     });
     this.hook('S_FEARMOVE_END', 2, { order: 10 }, (e) => {
-      if ((this.s.mode === 3 && this.gameId !== e.gameId) ||
-        this.user_hidden[e.gameId] ||
-        this.npc_hidden[e.gameId]) {
+      if ((this.s.mode === 3 && this.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId]) {
         return false;
       }
     });
 
     // proj
     this.hook('S_START_USER_PROJECTILE', 9, { order: 10 }, (e) => {
-      if (this.gameId !== e.gameId &&
-        this.user_list[e.gameId] &&
-        (this.s.mode > 0 || this.s.hide_projectiles)) {
+      if (this.gameId !== e.gameId && this.user_list[e.gameId] && (this.s.mode > 0 || this.s.hide_projectiles)) {
         return false;
       }
     });
 
     this.hook('S_SPAWN_PROJECTILE', this.m.majorPatchVersion >= 84 ? 5 : 5, { order: 10 }, (e) => { // TODO
-      if (this.gameId !== e.gameId &&
-        this.user_list[e.gameId] &&
-        (this.s.mode > 0 || this.s.hide_projectiles)) {
+      if (this.gameId !== e.gameId && this.user_list[e.gameId] && (this.s.mode > 0 || this.s.hide_projectiles)) {
         return false;
       }
     });

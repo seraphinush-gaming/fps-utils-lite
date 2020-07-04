@@ -3,7 +3,7 @@
   "conflicts": ["fps-booster","fps-booster-2000","fps-manager","fps-utils","hide-players","no-more-death-animation","no-more-drunk-screen","no_more_guardian","no-more-screen-effects","shaker"],
   "description": "tera-toolbox module to help increase fps",
   "disableAutoUpdate": false,
-  "donationUrl": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=B7QQJZV9L5P2J&source=url",
+  "donationUrl": "https://www.paypal.me/seraphinush",
   "name": "fps-utils-lite",
   "options": {
     "niceName": "fps-utils",
@@ -14,5 +14,5 @@
   },
   "servers": ["https://raw.githubusercontent.com/seraphinush-gaming/fps-utils-lite/master/"],
   "supportUrl": "https://github.com/seraphinush-gaming/fps-utils-lite/blob/master/README.md",
-  "version": "1.08.04"
+  "version": "1.08.05.v95.04"
 }
