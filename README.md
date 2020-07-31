@@ -15,7 +15,7 @@ This module is a simplified version of module `fps-utils` by Saegusae, Codeagon,
 Support seraph via paypal donations, thanks in advance !
 ```
 
-# fps-utils-lite [![](https://img.shields.io/badge/paypal.me-donate-333333.svg?colorA=0070BA&colorB=333333)](https://www.paypal.me/seraphinush)
+# fps-utils-lite [![](https://img.shields.io/badge/paypal-donate-333333.svg?colorA=0070BA&colorB=333333)](https://www.paypal.me/seraphinush)
 tera-toolbox module to help increase fps
 
 ## Auto-update guide
