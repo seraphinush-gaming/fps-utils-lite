@@ -1,6 +1,6 @@
 'use strict';
 
-const drunk_abn = [
+const DRUNK_ABN = [
   70251, 70252, 70253, 70254, 70255, 70256,
   4850, 48732, 48734, 48735, 48736, 48737, 48738,
   476806,
@@ -20,7 +20,6 @@ class fps_utils_lite {
     this.loaded = false;
 
     // initialize
-    this.gameId = BigInt(0);
     this.guild = new Set();
 
     this.user_list = {};
@@ -206,10 +205,6 @@ class fps_utils_lite {
     });
 
     // game state
-    mod.game.on('enter_game', () => {
-      this.gameId = mod.game.me.gameId;
-    });
-
     mod.game.me.on('change_zone', () => {
       this.user_list = {};
       this.user_shown = {};
@@ -389,7 +384,7 @@ class fps_utils_lite {
 
       if (e.huntingZoneId === 1023) {
         if (this.mod.settings.hide_all_summons) {
-          if (!this.mod.settings.hide_my_summons && this.gameId === e.owner) {
+          if (!this.mod.settings.hide_my_summons && this.mod.game.me.gameId === e.owner) {
             return;
           }
           this.npc_hidden[e.gameId] = e;
@@ -410,7 +405,7 @@ class fps_utils_lite {
 
     // servant
     this.hook('S_REQUEST_SPAWN_SERVANT', 4, { order: 10 }, (e) => {
-      if (this.mod.settings.hide_servants && this.gameId !== e.ownerId) {
+      if (this.mod.settings.hide_servants && this.mod.game.me.gameId !== e.ownerId) {
         this.servant_hidden[e.gameId] = e;
         return false;
       }
@@ -431,7 +426,7 @@ class fps_utils_lite {
 
     //
     this.hook('S_ACTION_STAGE', 9, { order: 10 }, (e) => {
-      if (this.gameId !== e.gameId && this.user_list[e.gameId]) {
+      if (this.mod.game.me.gameId !== e.gameId && this.user_list[e.gameId]) {
         if (this.mod.settings.mode === 2 || this.user_hidden[e.gameId]) {
           this.update_user_loc(e);
           return false;
@@ -442,7 +437,7 @@ class fps_utils_lite {
     this.hook('S_ABNORMALITY_BEGIN', 4, { order: 10 }, (e) => {
       if (this.user_hidden[e.target])
         return false;
-      if (this.mod.settings.hide_drunk_screen && drunk_abn.includes(e.id))
+      if (this.mod.settings.hide_drunk_screen && DRUNK_ABN.includes(e.id))
         return false;
     });
 
@@ -453,7 +448,7 @@ class fps_utils_lite {
 
     // hit
     this.hook('S_EACH_SKILL_RESULT', this.mod.majorPatchVersion >= 86 ? 14 : 13, { order: 10 }, (e) => {
-      if (this.gameId === e.source || this.gameId === e.owner) {
+      if (this.mod.game.me.gameId === e.source || this.mod.game.me.gameId === e.owner) {
         if (this.mod.settings.hit_me) {
           e.skill.id = 0;
           return true;
@@ -464,7 +459,7 @@ class fps_utils_lite {
         }
       }
       if (this.mod.settings.hit_other &&
-        this.gameId !== e.target &&
+        this.mod.game.me.gameId !== e.target &&
         (this.user_list[e.owner] || this.user_list[e.source])) {
         e.skill.id = 0;
         return true;
@@ -473,27 +468,23 @@ class fps_utils_lite {
 
     // fear
     this.hook('S_FEARMOVE_STAGE', 2, { order: 10 }, (e) => {
-      if ((this.mod.settings.mode === 3 && this.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId]) {
+      if ((this.mod.settings.mode === 3 && this.mod.game.me.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId])
         return false;
-      }
     });
     this.hook('S_FEARMOVE_END', 2, { order: 10 }, (e) => {
-      if ((this.mod.settings.mode === 3 && this.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId]) {
+      if ((this.mod.settings.mode === 3 && this.mod.game.me.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId])
         return false;
-      }
     });
 
     // proj
     this.hook('S_START_USER_PROJECTILE', 9, { order: 10 }, (e) => {
-      if (this.gameId !== e.gameId && this.user_list[e.gameId] && (this.mod.settings.mode > 0 || this.mod.settings.hide_projectiles)) {
+      if (this.mod.game.me.gameId !== e.gameId && this.user_list[e.gameId] && (this.mod.settings.mode > 0 || this.mod.settings.hide_projectiles))
         return false;
-      }
     });
 
     this.hook('S_SPAWN_PROJECTILE', this.mod.majorPatchVersion >= 84 ? 5 : 5, { order: 10 }, (e) => { // TODO
-      if (this.gameId !== e.gameId && this.user_list[e.gameId] && (this.mod.settings.mode > 0 || this.mod.settings.hide_projectiles)) {
+      if (this.mod.game.me.gameId !== e.gameId && this.user_list[e.gameId] && (this.mod.settings.mode > 0 || this.mod.settings.hide_projectiles))
         return false;
-      }
     });
 
     // dropitem
@@ -504,14 +495,14 @@ class fps_utils_lite {
 
     // action script
     this.hook('S_START_ACTION_SCRIPT', 'event', { order: -10 }, () => {
-      if (this.mod.settings.hide_action_script) {
+      if (this.mod.settings.hide_action_script)
         return false;
-      }
     });
 
     // guardian legion mission
     this.mod.tryHook('S_FIELD_EVENT_ON_ENTER', 'event', { order: -10 }, () => {
-      if (this.mod.settings.hide_glm) return false;
+      if (this.mod.settings.hide_glm)
+        return false;
     });
 
     this.hook('S_SYSTEM_MESSAGE', 1, { order: 10 }, (e) => {
@@ -538,11 +529,10 @@ class fps_utils_lite {
     this.loaded = false;
   }
 
-  send() { this.command.message(': ' + [...arguments].join('\n - ')); }
+  send(msg) { this.command.message(': ' + msg); }
 
   saveState() {
     let state = {
-      gameId: this.gameId,
       guild: this.guild,
       user_list: this.user_list,
       user_shown: this.user_shown,
@@ -555,7 +545,6 @@ class fps_utils_lite {
   }
 
   loadState(state) {
-    this.gameId = state.gameId;
     this.guild = state.guild;
     this.user_list = state.user_list;
     this.user_shown = state.user_shown;
