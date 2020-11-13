@@ -252,7 +252,7 @@ class fps_utils_lite {
       for (let i in this.user_hidden) {
         let user = this.user_hidden[i];
         if (this.guild.has(user.guildName) && user.guildName !== '') {
-          this.mod.send('S_SPAWN_USER', 15, user);
+          this.mod.send('S_SPAWN_USER', 16, user);
           this.user_shown[user.gameId] = user;
           delete this.user_hidden[i];
         }
@@ -265,7 +265,7 @@ class fps_utils_lite {
     return new Promise((resolve) => {
       for (let i in this.user_hidden) {
         if (this.party_list[this.user_hidden[i].gameId]) {
-          this.mod.send('S_SPAWN_USER', 15, this.user_hidden[i]);
+          this.mod.send('S_SPAWN_USER', 16, this.user_hidden[i]);
           this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
           delete this.user_hidden[i];
         }
@@ -277,7 +277,7 @@ class fps_utils_lite {
   show_all() {
     return new Promise((resolve) => {
       for (let i in this.user_hidden) {
-        this.mod.send('S_SPAWN_USER', 15, this.user_hidden[i]);
+        this.mod.send('S_SPAWN_USER', 16, this.user_hidden[i]);
         this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
         delete this.user_hidden[i];
       }
@@ -332,7 +332,7 @@ class fps_utils_lite {
 
   load() {
     // user
-    this.hook('S_SPAWN_USER', 15, { order: -10 }, (e) => {
+    this.hook('S_SPAWN_USER', 16, { order: -10 }, (e) => {
       this.user_list[e.gameId] = e;
       if (this.mod.settings.mode === 3) {
         this.user_hidden[e.gameId] = e;
@@ -488,7 +488,7 @@ class fps_utils_lite {
     });
 
     // dropitem
-    this.hook('S_SPAWN_DROPITEM', 8, { order: -10 }, (e) => {
+    this.hook('S_SPAWN_DROPITEM', 9, { order: -10 }, (e) => {
       if (this.mod.settings.hide_dropitem && this.mod.settings.dropitem_list.includes(e.item))
         return false;
     });
