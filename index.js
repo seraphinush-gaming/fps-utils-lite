@@ -213,8 +213,7 @@ class fps_utils_lite {
       this.servant_hidden = {};
     });
 
-    // mod.majorPatchVersion >= 95 ? 18 : 17
-    mod.hookOnce('S_GET_USER_LIST', 18, { order: -10 }, (e) => {
+    mod.hookOnce('S_GET_USER_LIST', mod.majorPatchVersion >= 101 ? 19 : 18, { order: -10 }, (e) => {
       e.characters.forEach((c) => {
         this.guild.add(c.guildName);
       });
@@ -332,7 +331,7 @@ class fps_utils_lite {
 
   load() {
     // user
-    this.hook('S_SPAWN_USER', 16, { order: -10 }, (e) => {
+    this.hook('S_SPAWN_USER', 17, { order: -10 }, (e) => {
       this.user_list[e.gameId] = e;
       if (this.mod.settings.mode === 3) {
         this.user_hidden[e.gameId] = e;
@@ -366,7 +365,8 @@ class fps_utils_lite {
     });
 
     // party
-    this.hook('S_PARTY_MEMBER_LIST', this.mod.majorPatchVersion >= 90 ? 7 : 7, (e) => {
+    // this.mod.majorPatchVersion >= 90 ? 7 : 7
+    this.hook('S_PARTY_MEMBER_LIST', 7, (e) => {
       e.members.forEach((m) => {
         this.party_list[m.gameId] = m;
       });
@@ -378,7 +378,7 @@ class fps_utils_lite {
     });
 
     // npc: summons, fireworks
-    this.hook('S_SPAWN_NPC', 11, { order: -10 }, (e) => {
+    this.hook('S_SPAWN_NPC', this.mod.majorPatchVersion >= 101 ? 12 : 11, { order: -10 }, (e) => {
       if (e.templateId === 9901 && e.walkSpeed == 0 && e.runSpeed == 0)
         return false;
 
@@ -447,7 +447,8 @@ class fps_utils_lite {
     });
 
     // hit
-    this.hook('S_EACH_SKILL_RESULT', this.mod.majorPatchVersion >= 86 ? 14 : 13, { order: 10 }, (e) => {
+    // this.mod.majorPatchVersion >= 86 ? 14 : 13
+    this.hook('S_EACH_SKILL_RESULT', 14, { order: 10 }, (e) => {
       if (this.mod.game.me.gameId === e.source || this.mod.game.me.gameId === e.owner) {
         if (this.mod.settings.hit_me) {
           e.skill.id = 0;

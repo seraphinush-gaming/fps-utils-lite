@@ -1,35 +1,8 @@
 {
-	"files": {
-		"README.md": "6c695348e0ae7628e113a7de9692eb81e69221fbedf8fa3cfffe704d6dead45e",
-		"index.js": "4cc37368bc833ef4816c668b1be64d9ea077e00044a9fa58c5323cb45c6ea653",
-		"module.json": "ce596627b821fef9de8120becadb80151d12b7ed8f084e5b546c33f09e832333",
-		"settings.js": "424adf3997171e564f9c4e72ac13df8a47295f5340fba0ba62fd3adc8bb5d94f"
-	},
-	"defs": {
-		"S_ABNORMALITY_BEGIN": 4,
-		"S_ABNORMALITY_REFRESH": 2,
-		"S_ACTION_STAGE": 9,
-		"S_DESPAWN_NPC": 3,
-		"S_DESPAWN_USER": 3,
-		"S_EACH_SKILL_RESULT": [13,14],
-		"S_FEARMOVE_END": 2,
-		"S_FEARMOVE_STAGE": 2,
-		"S_FIELD_EVENT_ON_ENTER": "event",
-		"S_GET_USER_LIST": 18,
-		"S_LEAVE_PARTY": "event",
-		"S_MOUNT_VEHICLE": 2,
-		"S_PARTY_MEMBER_LIST": 7,
-		"S_REQUEST_DESPAWN_SERVANT": 1,
-		"S_REQUEST_SPAWN_SERVANT": 4,
-		"S_SPAWN_DROPITEM": 9,
-		"S_SPAWN_NPC": 11,
-		"S_SPAWN_PROJECTILE": 5,
-		"S_SPAWN_USER": 16,
-		"S_START_ACTION_SCRIPT": "event",
-		"S_START_USER_PROJECTILE": 9,
-		"S_SYSTEM_MESSAGE": 1,
-		"S_UNMOUNT_VEHICLE": 2,
-		"S_USER_LOCATION": 5,
-		"S_USER_MOVETYPE": "event"
-	}
+  "files": {
+    "README.md": "6c695348e0ae7628e113a7de9692eb81e69221fbedf8fa3cfffe704d6dead45e",
+    "index.js": "135b3add0a1df80c77ffcc16a2a49c3ff759cb54c29188e862b4e938939d0535",
+    "module.json": "c02121105666d89c3d66a5385df77dfcdb237e37eeff54bee7da78cff7362bca",
+    "settings.js": "424adf3997171e564f9c4e72ac13df8a47295f5340fba0ba62fd3adc8bb5d94f"
+  }
 }
