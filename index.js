@@ -251,7 +251,7 @@ class fps_utils_lite {
       for (let i in this.user_hidden) {
         let user = this.user_hidden[i];
         if (this.guild.has(user.guildName) && user.guildName !== '') {
-          this.mod.send('S_SPAWN_USER', 16, user);
+          this.mod.send('S_SPAWN_USER', 17, user);
           this.user_shown[user.gameId] = user;
           delete this.user_hidden[i];
         }
@@ -264,7 +264,7 @@ class fps_utils_lite {
     return new Promise((resolve) => {
       for (let i in this.user_hidden) {
         if (this.party_list[this.user_hidden[i].gameId]) {
-          this.mod.send('S_SPAWN_USER', 16, this.user_hidden[i]);
+          this.mod.send('S_SPAWN_USER', 17, this.user_hidden[i]);
           this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
           delete this.user_hidden[i];
         }
