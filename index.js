@@ -276,7 +276,7 @@ class fps_utils_lite {
   show_all() {
     return new Promise((resolve) => {
       for (let i in this.user_hidden) {
-        this.mod.send('S_SPAWN_USER', 16, this.user_hidden[i]);
+        this.mod.send('S_SPAWN_USER', 17, this.user_hidden[i]);
         this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
         delete this.user_hidden[i];
       }
