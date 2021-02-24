@@ -21,7 +21,6 @@ class fps_utils_lite {
 
     // initialize
     this.guild = new Set();
-
     this.user_list = {};
     this.user_shown = {};
     this.user_hidden = {};
@@ -39,9 +38,9 @@ class fps_utils_lite {
         this.show_all();
         this.send(`Showing all users.`);
       },
-      'camerashake': () => {
-        mod.settings.hide_camera_shake = !mod.settings.hide_camera_shake;
-        this.handle_camera_shake();
+      'camerashake': (arg) => {
+        arg ? mod.settings.hide_camera_shake = !mod.settings.hide_camera_shake : null;
+        this.handle_camera_shake(arg);
         this.send(`Hiding of camera shake ${mod.settings.hide_camera_shake ? 'en' : 'dis'}abled.`);
       },
       'deathanim': () => {
@@ -178,13 +177,12 @@ class fps_utils_lite {
         this.handle_hide_user();
         this.send(`Refreshed spawned users.`);
       },
-      'servants': () => {
-        mod.settings.hide_servants = !mod.settings.hide_servants;
-        this.send(`Hiding of pets and partners ${mod.settings.hide_servants ? 'en' : 'dis'}abled.`);
+      'servants': () => { // TODO
+        this.send(`Deprecated. please refer to the in-game option to toggle Companions.`);
       },
       'status': () => {
-        this.mod.log(`Status :`);
-        console.log(JSON.stringify(this.s, null, 2));
+        mod.log(`Status :`);
+        console.log(JSON.stringify(mod.settings, null, 2));
         this.send(`Exported dropitem list to console.`);
       },
       'summons': (arg) => {
@@ -201,7 +199,7 @@ class fps_utils_lite {
             this.send(`Invalid argument. usage : fps summons [mine]`);
         }
       },
-      '$default': () => { this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|off|on|party|proj|refresh|servants|summons]`); }
+      '$default': () => { this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|off|on|party|proj|refresh|summons]`); }
     });
 
     // game state
@@ -213,7 +211,8 @@ class fps_utils_lite {
       this.servant_hidden = {};
     });
 
-    mod.hookOnce('S_GET_USER_LIST', mod.majorPatchVersion >= 101 ? 19 : 18, { order: -10 }, (e) => {
+    // mod.majorPatchVersion >= 101 ? 19 : 18
+    mod.hookOnce('S_GET_USER_LIST', mod.majorPatchVersion >= 103 ? 20 : 19, (e) => {
       e.characters.forEach((c) => {
         this.guild.add(c.guildName);
       });
@@ -309,8 +308,8 @@ class fps_utils_lite {
     });
   }
 
-  handle_camera_shake() {
-    this.mod.clientInterface.configureCameraShake(!this.mod.settings.hide_camera_shake, 0.3, 0.3);
+  handle_camera_shake(val = 0.6) {
+    this.mod.clientInterface.configureCameraShake(!this.mod.settings.hide_camera_shake, val, val);
   }
 
   update_user_loc(e) {
@@ -331,8 +330,12 @@ class fps_utils_lite {
 
   load() {
     // user
-    this.hook('S_SPAWN_USER', 17, { order: -10 }, (e) => {
+    this.hook('S_SPAWN_USER', 17, (e) => {
       this.user_list[e.gameId] = e;
+      if (this.mod.game.me.inBattleground || this.mod.game.me.inCivilUnrest) { // keep users if in bg / cu
+        this.user_shown[e.gameId] = e;
+        return;
+      }
       if (this.mod.settings.mode === 3) {
         this.user_hidden[e.gameId] = e;
         return false;
@@ -352,33 +355,33 @@ class fps_utils_lite {
       return false;
     });
 
-    this.hook('S_DESPAWN_USER', 3, { order: 10 }, (e) => {
+    this.hook('S_DESPAWN_USER', 3, (e) => {
       delete this.user_list[e.gameId];
       delete this.user_shown[e.gameId];
       delete this.user_hidden[e.gameId];
     });
 
-    this.hook('S_USER_LOCATION', 5, { order: 10 }, (e) => {
+    this.hook('S_USER_LOCATION', 5, (e) => {
       this.user_list[e.gameId] ? this.user_list[e.gameId].loc = e.dest : null;
       if (this.user_hidden[e.gameId])
         return false;
     });
 
     // party
-    // this.mod.majorPatchVersion >= 90 ? 7 : 7
+    // this.mod.majorPatchVersion >= 90 ? 7 : 6
     this.hook('S_PARTY_MEMBER_LIST', 7, (e) => {
       e.members.forEach((m) => {
         this.party_list[m.gameId] = m;
       });
     });
 
-    this.hook('S_LEAVE_PARTY', 'event', { order: 10 }, () => {
+    this.hook('S_LEAVE_PARTY', 'event', () => {
       this.party_list = {};
       this.handle_hide_user();
     });
 
     // npc: summons, fireworks
-    this.hook('S_SPAWN_NPC', this.mod.majorPatchVersion >= 101 ? 12 : 11, { order: -10 }, (e) => {
+    this.hook('S_SPAWN_NPC', this.mod.majorPatchVersion >= 101 ? 12 : 11, (e) => {
       if (e.templateId === 9901 && e.walkSpeed == 0 && e.runSpeed == 0)
         return false;
 
@@ -395,7 +398,7 @@ class fps_utils_lite {
       }
     });
 
-    this.hook('S_DESPAWN_NPC', 3, { order: -10 }, (e) => {
+    this.hook('S_DESPAWN_NPC', 3, (e) => {
       delete this.npc_hidden[e.gameId];
       if (this.mod.settings.hide_death_anim && e.type == 5) {
         e.type = 1;
@@ -403,29 +406,29 @@ class fps_utils_lite {
       }
     });
 
-    // servant
-    this.hook('S_REQUEST_SPAWN_SERVANT', 4, { order: 10 }, (e) => {
-      if (this.mod.settings.hide_servants && this.mod.game.me.gameId !== e.ownerId) {
+    // servants
+    this.hook('S_REQUEST_SPAWN_SERVANT', 4, (e) => {
+      if (this.user_hidden[e.ownerId]) {
         this.servant_hidden[e.gameId] = e;
         return false;
       }
     });
 
-    this.hook('S_REQUEST_DESPAWN_SERVANT', 1, { order: 10 }, (e) => {
+    this.hook('S_REQUEST_DESPAWN_SERVANT', 1, (e) => {
       delete this.servant_hidden[e.gameId];
     });
 
     // mount
-    this.hook('S_MOUNT_VEHICLE', 2, { order: 10 }, (e) => {
+    this.hook('S_MOUNT_VEHICLE', 2, (e) => {
       this.user_list[e.gameId] ? this.user_list[e.gameId].mount = e.id : null;
     });
 
-    this.hook('S_UNMOUNT_VEHICLE', 2, { order: 10 }, (e) => {
+    this.hook('S_UNMOUNT_VEHICLE', 2, (e) => {
       this.user_list[e.gameId] ? this.user_list[e.gameId].mount = 0 : null;
     });
 
     //
-    this.hook('S_ACTION_STAGE', 9, { order: 10 }, (e) => {
+    this.hook('S_ACTION_STAGE', 9, (e) => {
       if (this.mod.game.me.gameId !== e.gameId && this.user_list[e.gameId]) {
         if (this.mod.settings.mode === 2 || this.user_hidden[e.gameId]) {
           this.update_user_loc(e);
@@ -434,21 +437,21 @@ class fps_utils_lite {
       }
     });
 
-    this.hook('S_ABNORMALITY_BEGIN', 4, { order: 10 }, (e) => {
+    this.hook('S_ABNORMALITY_BEGIN', 4, (e) => {
       if (this.user_hidden[e.target])
         return false;
       if (this.mod.settings.hide_drunk_screen && DRUNK_ABN.includes(e.id))
         return false;
     });
 
-    this.hook('S_ABNORMALITY_REFRESH', 2, { order: 10 }, (e) => {
+    this.hook('S_ABNORMALITY_REFRESH', 2, (e) => {
       if (this.user_hidden[e.target])
         return false;
     });
 
     // hit
     // this.mod.majorPatchVersion >= 86 ? 14 : 13
-    this.hook('S_EACH_SKILL_RESULT', 14, { order: 10 }, (e) => {
+    this.hook('S_EACH_SKILL_RESULT', 14, (e) => {
       if (this.mod.game.me.gameId === e.source || this.mod.game.me.gameId === e.owner) {
         if (this.mod.settings.hit_me) {
           e.skill.id = 0;
@@ -468,45 +471,45 @@ class fps_utils_lite {
     });
 
     // fear
-    this.hook('S_FEARMOVE_STAGE', 2, { order: 10 }, (e) => {
+    this.hook('S_FEARMOVE_STAGE', 2, (e) => {
       if ((this.mod.settings.mode === 3 && this.mod.game.me.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId])
         return false;
     });
-    this.hook('S_FEARMOVE_END', 2, { order: 10 }, (e) => {
+    this.hook('S_FEARMOVE_END', 2, (e) => {
       if ((this.mod.settings.mode === 3 && this.mod.game.me.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId])
         return false;
     });
 
     // proj
-    this.hook('S_START_USER_PROJECTILE', 9, { order: 10 }, (e) => {
+    this.hook('S_START_USER_PROJECTILE', 9, (e) => {
       if (this.mod.game.me.gameId !== e.gameId && this.user_list[e.gameId] && (this.mod.settings.mode > 0 || this.mod.settings.hide_projectiles))
         return false;
     });
 
-    this.hook('S_SPAWN_PROJECTILE', this.mod.majorPatchVersion >= 84 ? 5 : 5, { order: 10 }, (e) => { // TODO
+    this.hook('S_SPAWN_PROJECTILE', this.mod.majorPatchVersion >= 101 ? 6 : 5, (e) => {
       if (this.mod.game.me.gameId !== e.gameId && this.user_list[e.gameId] && (this.mod.settings.mode > 0 || this.mod.settings.hide_projectiles))
         return false;
     });
 
     // dropitem
-    this.hook('S_SPAWN_DROPITEM', 9, { order: -10 }, (e) => {
+    this.hook('S_SPAWN_DROPITEM', 9, (e) => {
       if (this.mod.settings.hide_dropitem && this.mod.settings.dropitem_list.includes(e.item))
         return false;
     });
 
     // action script
-    this.hook('S_START_ACTION_SCRIPT', 'event', { order: -10 }, () => {
+    this.hook('S_START_ACTION_SCRIPT', 'event', () => {
       if (this.mod.settings.hide_action_script)
         return false;
     });
 
     // guardian legion mission
-    this.mod.tryHook('S_FIELD_EVENT_ON_ENTER', 'event', { order: -10 }, () => {
+    this.mod.tryHook('S_FIELD_EVENT_ON_ENTER', 'event', () => {
       if (this.mod.settings.hide_glm)
         return false;
     });
 
-    this.hook('S_SYSTEM_MESSAGE', 1, { order: 10 }, (e) => {
+    this.hook('S_SYSTEM_MESSAGE', 1, (e) => {
       if (this.mod.settings.hide_glm) {
         let msg = this.mod.parseSystemMessage(e.message);
         switch (msg.id) {

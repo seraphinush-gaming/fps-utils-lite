@@ -9,7 +9,7 @@ This module is a simplified version of module `fps-utils` by Saegusae, Codeagon,
 Support seraph via paypal donations, thanks in advance !
 ```
 
-# fps-utils-lite [![](https://img.shields.io/badge/paypal-donate-333333.svg?colorA=0070BA&colorB=333333)](https://www.paypal.me/seraphinush)
+# fps-utils-lite [![](https://img.shields.io/badge/paypal-donate-333333.svg?colorA=0070BA&colorB=333333)](https://www.paypal.me/seraphinush) [![](https://img.shields.io/badge/patreon-pledge-333333.svg?colorA=F96854&colorB=333333)](https://www.patreon.com/seraphinush)
 tera-toolbox module to help increase fps
 
 ## Auto-update guide
@@ -22,8 +22,9 @@ tera-toolbox module to help increase fps
   - Toggle screen zoom script hide/show
 - __`all`__
   - Show all users
-- __`camerashake`__
+- __`camerashake [<arg>]`__
   - Toggle camera shake hide/show
+  - `<arg>` can be added to adjust camera shake intensity
 - __`deathanim`__
   - Toggle death animation hide/show
 - __`dropitem`__
