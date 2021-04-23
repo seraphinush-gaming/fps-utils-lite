@@ -9,7 +9,6 @@ const DefaultSettings = {
   "hide_my_summons": false,
   "hide_death_anim": false,
   "hide_projectiles": false,
-  "hide_servants": false,
   "hide_dropitem": false,
   "dropitem_list": [
     639, // speed mote
@@ -19,7 +18,6 @@ const DefaultSettings = {
     91344 // fashion coupon
   ],
   "hide_action_script": false,
-  "hide_camera_shake": false,
   "hide_drunk_screen": false,
   "hide_glm": false,
   "hit_me": false,
@@ -37,7 +35,7 @@ function MigrateSettings(from_ver, to_ver, settings) {
       settings = MigrateSettings(from_ver, from_ver + 1, settings);
       return MigrateSettings(from_ver + 1, to_ver, settings);
     }
-  
+
     switch (to_ver) {
       case 2:
         settings.hide_fireworks = settings.hideFireworks;
@@ -71,6 +69,9 @@ function MigrateSettings(from_ver, to_ver, settings) {
         break;
       case 6:
         settings.hide_glm = false;
+      case 7:
+        delete settings.hide_camera_shake;
+        delete settings.hide_servants;
     }
 
     return settings;

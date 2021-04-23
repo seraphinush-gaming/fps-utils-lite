@@ -16,50 +16,45 @@ tera-toolbox module to help increase fps
 - Create a folder called `fps-utils-lite` in `tera-toolbox/mods` and download >> [`module.json`](https://raw.githubusercontent.com/seraphinush-gaming/fps-utils-lite/master/module.json) << (right-click this link and save link as..) into the folder
 
 ## Usage
-- __`fps`__
+- `fps`
 ### Arguments
-- __`actionscript`__
+- `actionscript`
   - Toggle screen zoom script hide/show
-- __`all`__
+- `all`
   - Show all users
-- __`camerashake [<arg>]`__
-  - Toggle camera shake hide/show
-  - `<arg>` can be added to adjust camera shake intensity
-- __`deathanim`__
+- `deathanim`
   - Toggle death animation hide/show
-- __`dropitem`__
+- `dropitem`
   - Toggle dropitem hide/show
   - `add <id | chat link>` : Add `id` to dropitem list
   - `list` : Print dropitem list in console
   - `rm <id | chat link>` : Remove `id` from dropitem list
-- __`drunkscreen`__
+- `drunkscreen`
   - Toggle drunk screen abnormality hide/show
-- __`fireworks`__
+- `fireworks`
   - Toggle fireworks hide/show
-- __`glm`__
+- `glm`
   - Toggle Guardian Mission Legion UI hide/show
-- __`guild`__
+- `guild`
   - Toggle guild members hide/show
-- __`hit`__
+- `hit`
   - `damage` : Toggle user skill damage numbers hide/show
   - `me` : Toggle user skill hits hide/show
   - `other` : Toggle other player skill hits hide/show
-- __`mode`__
+- `mode`
   - `0` : Disable fps improvements
   - `1` : Set mode to 1, with projectiles hidden
   - `2` : Set mode to 2, with additional skill effects hidden
   - `3` : Set mode to 3, with additional players hidden
-- __`on`__
-- __`off`__
-- __`party`__
+- `on`
+- `off`
+- `party`
   - Toggle party members hide/show
-- __`proj`__
+- `proj`
   - Toggle projectiles hide/show
-- __`servants`__
-  - Toggle partners and pets hide/show
-- __`status`__
+- `status`
   - Print status of relevant variables
-- __`summons`__
+- `summons`
   - Toggle summons hide/show
   - `mine` : Toggles user summons hide/show
 
@@ -85,6 +80,9 @@ tera-toolbox module to help increase fps
 ## Changelog
 <details>
 
+    1.09
+    - Deprecated `camerashake` option
+    - Deprecated `servants` option
     1.08
     - Added `glm` option
     1.07

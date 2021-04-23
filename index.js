@@ -26,7 +26,6 @@ class fps_utils_lite {
     this.user_hidden = {};
     this.party_list = {};
     this.npc_hidden = {};
-    this.servant_hidden = {};
 
     mod.command.add('fps', {
       'actionscript': () => {
@@ -38,10 +37,8 @@ class fps_utils_lite {
         this.show_all();
         this.send(`Showing all users.`);
       },
-      'camerashake': (arg) => {
-        arg ? mod.settings.hide_camera_shake = !mod.settings.hide_camera_shake : null;
-        this.handle_camera_shake(arg);
-        this.send(`Hiding of camera shake ${mod.settings.hide_camera_shake ? 'en' : 'dis'}abled.`);
+      'camerashake': () => { // TODO -- removed patch 104
+        this.send(`Deprecated. please refer to the in-game option to configure camera shake.`);
       },
       'deathanim': () => {
         mod.settings.hide_death_anim = !mod.settings.hide_death_anim;
@@ -53,12 +50,13 @@ class fps_utils_lite {
           this.send(`Hiding of dropitem ${mod.settings.hide_dropitem ? 'en' : 'dis'}abled.`);
         },
         'add': async (id) => {
-          if (id) {
-            (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatlink_id(id);
-            mod.settings.dropitem_list.push(id);
-            this.send(`Added &lt;${mod.game.data.items.get(id).name}&gt; to dropitem list.`);
-          }
-          else { this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`); }
+          if (!id)
+            return this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`);
+
+          (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatlink_id(id);
+          mod.settings.dropitem_list.push(id);
+          let name = mod.game.data.items.get(id) ? mod.game.data.items.get(id).name : 'undefined';
+          this.send(`Added &lt;${name}&gt; to dropitem list.`);
         },
         'list': () => {
           this.mod.log(`Dropitem list :`);
@@ -69,12 +67,13 @@ class fps_utils_lite {
           this.send(`Exported dropitem list to console.`);
         },
         'rm': async (id) => {
-          if (id) {
-            (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatlink_id(id);
-            mod.settings.dropitem_list.splice(mod.settings.dropitem_list.indexOf(id), 1);
-            this.send(`Removed &lt;${mod.game.data.items.get(id).name}&gt; from dropitem list.`);
-          }
-          else { this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`); }
+          if (!id)
+            return this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`);
+
+          (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatlink_id(id);
+          mod.settings.dropitem_list.splice(mod.settings.dropitem_list.indexOf(id), 1);
+          let name = mod.game.data.items.get(id) ? mod.game.data.items.get(id).name : 'undefined';
+          this.send(`Removed &lt;${name}&gt; from dropitem list.`);
         },
         '$default': () => {
           this.send(`Invalid argument. usage : fps dropitem [add|list|rm]`);
@@ -177,7 +176,7 @@ class fps_utils_lite {
         this.handle_hide_user();
         this.send(`Refreshed spawned users.`);
       },
-      'servants': () => { // TODO
+      'servants': () => { // TODO -- removed patch 103
         this.send(`Deprecated. please refer to the in-game option to toggle Companions.`);
       },
       'status': () => {
@@ -199,7 +198,7 @@ class fps_utils_lite {
             this.send(`Invalid argument. usage : fps summons [mine]`);
         }
       },
-      '$default': () => { this.send(`Invalid argument. usage : fps [actionscript|all|camerashake|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|off|on|party|proj|refresh|summons]`); }
+      '$default': () => { this.send(`Invalid argument. usage : fps [actionscript|all|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|off|on|party|proj|refresh|summons]`); }
     });
 
     // game state
@@ -208,11 +207,11 @@ class fps_utils_lite {
       this.user_shown = {};
       this.user_hidden = {};
       this.npc_hidden = {};
-      this.servant_hidden = {};
     });
 
     // mod.majorPatchVersion >= 101 ? 19 : 18
-    mod.hookOnce('S_GET_USER_LIST', mod.majorPatchVersion >= 103 ? 20 : 19, (e) => {
+    // mod.majorPatchVersion >= 103 ? 20 : 19
+    mod.hookOnce('S_GET_USER_LIST', mod.majorPatchVersion >= 104 ? 21 : 20, (e) => {
       e.characters.forEach((c) => {
         this.guild.add(c.guildName);
       });
@@ -224,9 +223,6 @@ class fps_utils_lite {
     mod.tryHook('S_USER_MOVETYPE', 'event', () => {
       return false;
     });
-
-    // camera shake
-    this.handle_camera_shake();
 
   }
 
@@ -306,10 +302,6 @@ class fps_utils_lite {
       res = parseInt(res[1]);
       resolve(res);
     });
-  }
-
-  handle_camera_shake(val = 0.6) {
-    this.mod.clientInterface.configureCameraShake(!this.mod.settings.hide_camera_shake, val, val);
   }
 
   update_user_loc(e) {
@@ -404,18 +396,6 @@ class fps_utils_lite {
         e.type = 1;
         return true;
       }
-    });
-
-    // servants
-    this.hook('S_REQUEST_SPAWN_SERVANT', 4, (e) => {
-      if (this.user_hidden[e.ownerId]) {
-        this.servant_hidden[e.gameId] = e;
-        return false;
-      }
-    });
-
-    this.hook('S_REQUEST_DESPAWN_SERVANT', 1, (e) => {
-      delete this.servant_hidden[e.gameId];
     });
 
     // mount
@@ -543,7 +523,6 @@ class fps_utils_lite {
       user_hidden: this.user_hidden,
       party_list: this.party_list,
       npc_hidden: this.npc_hidden,
-      servant_hidden: this.servant_hidden
     }
     return state;
   }
@@ -555,7 +534,6 @@ class fps_utils_lite {
     this.user_hidden = state.user_hidden;
     this.party_list = state.party_list;
     this.npc_hidden = state.npc_hidden;
-    this.servant_hidden = state.servant_hidden;
   }
 
 }
