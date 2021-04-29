@@ -305,12 +305,12 @@ class fps_utils_lite {
   }
 
   update_user_loc(e) {
-    this.mod.send('S_USER_LOCATION', 5, {
+    this.mod.toClient('S_USER_LOCATION', this.mod.majorPatchVersion >= 105 ? 6 : 5, {
       gameId: e.gameId,
       loc: e.loc,
       w: e.w,
-      dest: e.loc,
       speed: 300,
+      dest: e.loc,
       type: 7
     });
   }
