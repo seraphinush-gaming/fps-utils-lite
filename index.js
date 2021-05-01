@@ -353,7 +353,7 @@ class fps_utils_lite {
       delete this.user_hidden[e.gameId];
     });
 
-    this.hook('S_USER_LOCATION', 5, (e) => {
+    this.hook('S_USER_LOCATION', this.mod.majorPatchVersion >= 105 ? 6 : 5, (e) => {
       this.user_list[e.gameId] ? this.user_list[e.gameId].loc = e.dest : null;
       if (this.user_hidden[e.gameId])
         return false;
