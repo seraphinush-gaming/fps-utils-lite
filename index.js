@@ -360,8 +360,9 @@ class fps_utils_lite {
     });
 
     // party
-    // this.mod.majorPatchVersion >= 90 ? 7 : 6
-    this.hook('S_PARTY_MEMBER_LIST', 7, (e) => {
+    // this.mod.majorPatchVersion >= 69 ? 7 : 6
+    // this.mod.majorPatchVersion >= 90 ? 8 : 7
+    this.hook('S_PARTY_MEMBER_LIST', this.mod.majorPatchVersion >= 106 ? 9 : 8, (e) => {
       e.members.forEach((m) => {
         this.party_list[m.gameId] = m;
       });
