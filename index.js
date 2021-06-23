@@ -1,5 +1,10 @@
 'use strict';
 
+async function asyncForEach(arr, cb) {
+  for (let i = 0; i < arr.length; i++)
+    await cb(arr[i], i, arr);
+}
+
 const DRUNK_ABN = [
   70251, 70252, 70253, 70254, 70255, 70256,
   4850, 48732, 48734, 48735, 48736, 48737, 48738,
@@ -10,7 +15,7 @@ const DRUNK_ABN = [
   999001011
 ]
 
-class fps_utils_lite {
+class FpsUtilsLite {
 
   constructor(mod) {
 
@@ -21,48 +26,47 @@ class fps_utils_lite {
 
     // initialize
     this.guild = new Set();
-    this.user_list = {};
-    this.user_shown = {};
-    this.user_hidden = {};
-    this.party_list = {};
-    this.npc_hidden = {};
+    this.userList = {};
+    this.userShown = {};
+    this.userHidden = {};
+    this.partyList = {};
+    this.npcHidden = {};
 
     mod.command.add('fps', {
       'actionscript': () => {
-        mod.settings.hide_action_script = !mod.settings.hide_action_script;
-        this.send(`Hiding of screen zoom script ${mod.settings.hide_action_script ? 'en' : 'dis'}abled.`);
+        mod.settings.hide_actionScript = !mod.settings.hide_actionScript;
+        this.send(`Hiding of screen script ${mod.settings.hide_actionScript ? 'en' : 'dis'}abled.`);
       },
       'all': () => {
         mod.settings.guild = mod.settings.party = false;
-        this.show_all();
+        this.showAll();
         this.send(`Showing all users.`);
       },
-      'camerashake': () => { // TODO -- removed patch 104
-        this.send(`Deprecated. please refer to the in-game option to configure camera shake.`);
-      },
       'deathanim': () => {
-        mod.settings.hide_death_anim = !mod.settings.hide_death_anim;
-        this.send(`Hiding of death animation ${mod.settings.hide_death_anim ? 'en' : 'dis'}abled.`);
+        mod.settings.hide_deathAnim = !mod.settings.hide_deathAnim;
+        this.send(`Hiding of death animation ${mod.settings.hide_deathAnim ? 'en' : 'dis'}abled.`);
       },
       'dropitem': {
         '$none': () => {
           mod.settings.hide_dropitem = !mod.settings.hide_dropitem;
-          this.send(`Hiding of dropitem ${mod.settings.hide_dropitem ? 'en' : 'dis'}abled.`);
+          this.send(`Hiding of user-designated dropitems ${mod.settings.hide_dropitem ? 'en' : 'dis'}abled.`);
         },
         'add': async (id) => {
           if (!id)
             return this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`);
 
-          (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatlink_id(id);
+          (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatLinkId(id);
           mod.settings.dropitem_list.push(id);
           let name = mod.game.data.items.get(id) ? mod.game.data.items.get(id).name : 'undefined';
           this.send(`Added &lt;${name}&gt; to dropitem list.`);
         },
         'list': () => {
-          this.mod.log(`Dropitem list :`);
-          mod.settings.dropitem_list.sort();
+          mod.log(`Dropitem list :`);
+          mod.settings.dropitem_list.sort((a, b) => parseInt(a) - parseInt(b));
+          mod.settings.dropitem_list = Array.from(new Set(mod.settings.dropitem_list));
           mod.settings.dropitem_list.forEach((item) => {
-            console.log('- ' + item + ' : ' + (mod.game.data.items.get(item) ? mod.game.data.items.get(item).name : 'undefined'));
+            let name = mod.game.data.items.get(item) ? mod.game.data.items.get(item).name : 'undefined';
+            console.log('- ' + item + ' : ' + name);
           });
           this.send(`Exported dropitem list to console.`);
         },
@@ -70,7 +74,7 @@ class fps_utils_lite {
           if (!id)
             return this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`);
 
-          (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatlink_id(id);
+          (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatLinkId(id);
           mod.settings.dropitem_list.splice(mod.settings.dropitem_list.indexOf(id), 1);
           let name = mod.game.data.items.get(id) ? mod.game.data.items.get(id).name : 'undefined';
           this.send(`Removed &lt;${name}&gt; from dropitem list.`);
@@ -80,8 +84,8 @@ class fps_utils_lite {
         }
       },
       'drunkscreen': () => {
-        mod.settings.hide_drunk_screen = !mod.settings.hide_drunk_screen;
-        this.send(`Hiding of drunk screen ${mod.settings.hide_drunk_screen ? 'en' : 'dis'}abled.`);
+        mod.settings.hide_drunkScreen = !mod.settings.hide_drunkScreen;
+        this.send(`Hiding of drunk screen ${mod.settings.hide_drunkScreen ? 'en' : 'dis'}abled.`);
       },
       'fireworks': () => {
         mod.settings.hide_fireworks = !mod.settings.hide_fireworks;
@@ -93,26 +97,24 @@ class fps_utils_lite {
       },
       'guild': () => {
         mod.settings.guild = !mod.settings.guild;
-        this.handle_hide_user();
+        this.handle_hideUser();
         this.send(`Hiding of everyone but your guild members ${mod.settings.guild ? 'en' : 'dis'}abled.`);
       },
       'hit': (arg) => {
         switch (arg) {
-          case 'damage':
-            mod.settings.hit_damage = !mod.settings.hit_damage;
-            this.send(`Hiding of the players skill damage numbers ${mod.settings.hit_damage ? 'en' : 'dis'}abled.`);
+          case undefined:
+            mod.settings.hide_hit = !mod.settings.hide_hit;
+            this.send(`Hiding of other players skill hit effect ${mod.settings.hide_hit ? 'en' : 'dis'}abled.`);
             break;
-          case 'me':
-            mod.settings.hit_me = !mod.settings.hit_me;
-            this.send(`Hiding of the player's skill hits ${mod.settings.hit_me ? 'en' : 'dis'}abled.`);
+          case 'mine':
+            mod.settings.hide_myHit = !mod.settings.hide_myHit;
+            this.send(`Hiding of the player's skill hit effect ${mod.settings.hide_myHit ? 'en' : 'dis'}abled.`);
             break;
-          case 'other':
-            mod.settings.hit_other = !mod.settings.hit_other;
-            this.send(`Hiding of other players skill hits ${mod.settings.hit_other ? 'en' : 'dis'}abled.`);
+          case 'damage': // TODO
+            this.send(`Deprecated. please refer to the in-game option to configure damage number visibility.`);
             break;
           default:
-            this.send(`Invalid argument. usage : fps hit [damage|me|other]`);
-            break;
+            this.send(`Invalid argument. usage : fps hit [mine]`);
         }
       },
       'mode': (arg) => {
@@ -120,198 +122,206 @@ class fps_utils_lite {
         switch (arg) {
           case '0':
             mod.settings.mode = 0;
-            mod.settings.guild = mod.settings.hit_other = mod.settings.party = false;
-            this.handle_hide_user();
-            this.send(`FPS mode set to 0, all FPS improvements disabled.`);
+            mod.settings.guild = mod.settings.party = mod.settings.hide_hit = false;
+            this.handle_hideUser();
+            this.send(`Mode set to 0, all FPS improvements disabled.`);
             break;
           case '1':
             mod.settings.mode = 1;
-            mod.settings.hit_other = true;
-            if (prev === 3) {
-              this.handle_hide_user();
-            }
-            this.send(`FPS mode set to 1, projectiles hidden and abnormalities disabled.`);
+            mod.settings.hide_hit = true;
+            if (prev === 3) this.handle_hideUser();
+            this.send(`Mode set to 1, projectiles and select skill effects disabled.`);
             break;
           case '2':
             mod.settings.mode = 2;
-            mod.settings.hit_other = true;
-            if (prev === 3) {
-              this.handle_hide_user();
-            }
-            this.send(`FPS mode set to 2, all skill effects disabled.`);
+            mod.settings.hide_hit = true;
+            if (prev === 3) this.handle_hideUser();
+            this.send(`Mode set to 2, all skill motion of other players disabled.`);
             break;
           case '3':
             mod.settings.mode = 3;
-            mod.settings.hit_other = true;
-            this.handle_hide_user();
-            this.send(`FPS mode set to 3, all players, their effects and their hit effects disabled.`);
+            mod.settings.hide_hit = true;
+            this.handle_hideUser();
+            this.send(`Mode set to 3, all other players hidden.`);
             break;
           default:
             this.send(`Invalid argument. usage : fps mode [0|1|2|3]`);
         }
       },
-      'off': () => {
-        if (this.loaded) {
-          this.show_all();
-          this.unload();
-          this.send(`Removed all necessary hooks.`);
-        }
-      },
-      'on': () => {
-        if (!this.loaded) {
-          this.load();
-          this.send(`Loaded all necessary hooks.`);
-        }
-      },
       'party': () => {
         mod.settings.party = !mod.settings.party
-        this.handle_hide_user();
+        this.handle_hideUser();
         this.send(`Hiding of everyone but your group ${mod.settings.party ? 'en' : 'dis'}abled.`);
       },
-      'proj': () => {
-        mod.settings.hide_projectiles = !mod.settings.hide_projectiles;
-        this.send(`Hiding of projectile effects ${mod.settings.hide_projectiles ? 'en' : 'dis'}abled.`);
+      'proj': (arg) => {
+        switch (arg) {
+          case undefined:
+            mod.settings.hide_projectiles = !mod.settings.hide_projectiles;
+            this.send(`Hiding of other player projectile effects ${mod.settings.hide_projectiles ? 'en' : 'dis'}abled.`);
+            break;
+          case 'mine':
+            mod.settings.hide_myProjectiles = !mod.settings.hide_myProjectiles;
+            this.send(`Hiding of my projectile effects ${mod.settings.hide_myProjectiles ? 'en' : 'dis'}abled.`);
+            break;
+          default:
+            this.send(`Invalid argument. usage : fps proj [mine]`);
+        }
       },
-      'refresh': () => {
-        this.handle_hide_user();
+      'refresh': async () => {
+        await this.hideAll();
+        this.handle_hideUser();
         this.send(`Refreshed spawned users.`);
-      },
-      'servants': () => { // TODO -- removed patch 103
-        this.send(`Deprecated. please refer to the in-game option to toggle Companions.`);
       },
       'status': () => {
         mod.log(`Status :`);
         console.log(JSON.stringify(mod.settings, null, 2));
-        this.send(`Exported dropitem list to console.`);
+        this.send(`Exported settings to console.`);
       },
       'summons': (arg) => {
         switch (arg) {
           case undefined:
-            mod.settings.hide_all_summons = !mod.settings.hide_all_summons;
-            this.send(`Hiding of summoned NPCs ${mod.settings.hide_all_summons ? 'en' : 'dis'}abled.`);
+            mod.settings.hide_summons = !mod.settings.hide_summons;
+            this.send(`Hiding of summoned NPCs ${mod.settings.hide_summons ? 'en' : 'dis'}abled.`);
             break;
           case 'mine':
-            mod.settings.hide_my_summons = !mod.settings.hide_my_summons;
-            this.send(`Hiding of owned summoned NPCs ${mod.settings.hide_my_summons ? 'en' : 'dis'}abled.`);
+            mod.settings.hide_mySummons = !mod.settings.hide_mySummons;
+            this.send(`Hiding of self summoned NPCs ${mod.settings.hide_mySummons ? 'en' : 'dis'}abled.`);
             break;
           default:
             this.send(`Invalid argument. usage : fps summons [mine]`);
         }
       },
-      '$default': () => { this.send(`Invalid argument. usage : fps [actionscript|all|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|off|on|party|proj|refresh|summons]`); }
+      '?': () => {
+        this.send(`Usage : fps [actionscript|all|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|party|proj|refresh|summons]`);
+      },
+      '$default': () => { this.send(`Invalid argument. usage : fps [actionscript|all|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|party|proj|refresh|summons]`); }
     });
 
     // game state
-    mod.game.me.on('change_zone', () => {
-      this.user_list = {};
-      this.user_shown = {};
-      this.user_hidden = {};
-      this.npc_hidden = {};
+    mod.game.on('enter_loading_screen', () => {
+      this.userList = {};
+      this.userShown = {};
+      this.userHidden = {};
+      this.npcHidden = {};
     });
 
     // mod.majorPatchVersion >= 101 ? 19 : 18
     // mod.majorPatchVersion >= 103 ? 20 : 19
     mod.hookOnce('S_GET_USER_LIST', mod.majorPatchVersion >= 104 ? 21 : 20, (e) => {
-      e.characters.forEach((c) => {
-        this.guild.add(c.guildName);
-      });
+      e.characters.forEach((ch) => { this.guild.add(ch.guildName); });
     });
-
-    this.load();
 
     // user movetype
-    mod.tryHook('S_USER_MOVETYPE', 'event', () => {
-      return false;
-    });
+    mod.tryHook('S_USER_MOVETYPE', 'event', () => { return false; });
+
+    this.load();
 
   }
 
   destructor() {
     this.command.remove('fps');
+    this.mod.settings.dropitem_list.sort((a, b) => parseInt(a) - parseInt(b));
+    this.mod.settings.dropitem_list = Array.from(new Set(this.mod.settings.dropitem_list));
     this.unload();
   }
 
   // helper
-  async handle_hide_user() {
-    await this.hide_all();
-    if (this.mod.settings.mode === 3) return;
-    if (this.mod.settings.party) await this.show_party();
-    if (this.mod.settings.guild) await this.show_guild();
-    if (this.mod.settings.mode < 3 && !this.mod.settings.guild && !this.mod.settings.party)
-      this.show_all();
-  }
+  async handle_hideUser() {
+    if (this.mod.settings.mode === 3) return this.hideAll();
+    if (!this.mod.settings.guild && !this.mod.settings.party) return this.showAll();
 
-  show_guild() {
-    return new Promise((resolve) => {
-      for (let i in this.user_hidden) {
-        let user = this.user_hidden[i];
+    let toHide = [];
+    for (let i in this.userShown) {
+      const user = this.userShown[i];
+      if (this.mod.settings.guild) {
+        if (!this.guild.has(user.guildName) || user.guildName == '') {
+          toHide.push(user);
+          continue;
+        }
+      }
+      if (this.mod.settings.party) {
+        if (!this.partyList[user.gameId]) {
+          toHide.push(user);
+          continue;
+        }
+      }
+    }
+
+    let toShow = [];
+    for (let i in this.userHidden) {
+      const user = this.userHidden[i];
+      if (this.mod.settings.guild) {
         if (this.guild.has(user.guildName) && user.guildName !== '') {
-          this.mod.send('S_SPAWN_USER', 17, user);
-          this.user_shown[user.gameId] = user;
-          delete this.user_hidden[i];
+          toShow.push(user);
+          continue;
         }
       }
-      resolve();
-    });
-  }
-
-  show_party() {
-    return new Promise((resolve) => {
-      for (let i in this.user_hidden) {
-        if (this.party_list[this.user_hidden[i].gameId]) {
-          this.mod.send('S_SPAWN_USER', 17, this.user_hidden[i]);
-          this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
-          delete this.user_hidden[i];
+      if (this.mod.settings.party) {
+        if (this.partyList[user.gameId]) {
+          toShow.push(user);
+          continue;
         }
       }
+    }
+
+    asyncForEach(toHide, async user => { await this.hideUser(user); });
+    asyncForEach(toShow, async user => { await this.showUser(user); });
+  }
+
+  showUser(user) {
+    return new Promise((resolve) => {
+      this.mod.send('S_SPAWN_USER', 17, user);
+      this.userShown[user.gameId] = user;
+      delete this.userHidden[user.gameId];
       resolve();
     });
   }
 
-  show_all() {
+  showAll() {
     return new Promise((resolve) => {
-      for (let i in this.user_hidden) {
-        this.mod.send('S_SPAWN_USER', 17, this.user_hidden[i]);
-        this.user_shown[this.user_hidden[i].gameId] = this.user_hidden[i];
-        delete this.user_hidden[i];
+      for (let i in this.userHidden) {
+        this.mod.send('S_SPAWN_USER', 17, this.userHidden[i]);
+        this.userShown[this.userHidden[i].gameId] = this.userHidden[i];
+        delete this.userHidden[i];
       }
-      this.user_hidden = {};
+      this.userHidden = {};
       resolve();
     });
   }
 
-  hide_all() {
+  hideUser(user) {
     return new Promise((resolve) => {
-      for (let i in this.user_list) {
+      this.mod.send('S_DESPAWN_USER', 3, {
+        gameId: user.gameId,
+        type: 1
+      });
+      this.userHidden[user.gameId] = user;
+      delete this.userShown[user.gameId];
+      resolve();
+    });
+  }
+
+  hideAll() {
+    return new Promise((resolve) => {
+      for (let i in this.userList) {
         this.mod.send('S_DESPAWN_USER', 3, {
-          gameId: this.user_list[i].gameId,
+          gameId: this.userList[i].gameId,
           type: 1
         });
-        this.user_hidden[this.user_list[i].gameId] = this.user_list[i];
-        delete this.user_shown[i];
+        this.userHidden[this.userList[i].gameId] = this.userList[i];
+        delete this.userShown[i];
       }
-      this.user_shown = {};
+      this.userShown = {};
       resolve();
     });
   }
 
-  get_chatlink_id(chatLink) {
+  get_chatLinkId(chatLink) {
     return new Promise((resolve) => {
       let regex_id = /#(\d+)@/;
       let res = chatLink.match(regex_id);
       res = parseInt(res[1]);
       resolve(res);
-    });
-  }
-
-  update_user_loc(e) {
-    this.mod.toClient('S_USER_LOCATION', this.mod.majorPatchVersion >= 105 ? 6 : 5, {
-      gameId: e.gameId,
-      loc: e.loc,
-      w: e.w,
-      speed: 300,
-      dest: e.loc,
-      type: 7
     });
   }
 
@@ -323,153 +333,186 @@ class fps_utils_lite {
   load() {
     // user
     this.hook('S_SPAWN_USER', 17, (e) => {
-      this.user_list[e.gameId] = e;
-      if (this.mod.game.me.inBattleground || this.mod.game.me.inCivilUnrest) { // keep users if in bg / cu
-        this.user_shown[e.gameId] = e;
-        return;
-      }
+      if (this.mod.game.me.inBattleground) return;
+      if (this.mod.game.me.inCivilUnrest) return;
+
+      this.userList[e.gameId] = e;
+
       if (this.mod.settings.mode === 3) {
-        this.user_hidden[e.gameId] = e;
+        this.userHidden[e.gameId] = e;
         return false;
       }
-      if (this.mod.settings.guild && e.guildName !== '' && this.guild.has(e.guildName)) {
-        this.user_shown[e.gameId] = e;
-        return;
-      }
-      if (this.mod.settings.party && this.party_list[e.gameId]) {
-        this.user_shown[e.gameId] = e;
-        return;
-      }
-      if (!this.mod.settings.guild && !this.mod.settings.party && this.mod.settings.mode < 3) {
-        return;
-      }
-      this.user_hidden[e.gameId] = e;
+
+      if (this.mod.settings.guild && this.guild.has(e.guildName))
+        return this.userShown[e.gameId] = e;
+
+      if (this.mod.settings.party && this.partyList[e.gameId])
+        return this.userShown[e.gameId] = e;
+
+      if (this.mod.settings.mode < 3)
+        return this.userShown[e.gameId] = e;
+
+      this.userShown[e.gameId] = e;
       return false;
     });
 
     this.hook('S_DESPAWN_USER', 3, (e) => {
-      delete this.user_list[e.gameId];
-      delete this.user_shown[e.gameId];
-      delete this.user_hidden[e.gameId];
+      delete this.userList[e.gameId];
+      delete this.userShown[e.gameId];
+      delete this.userHidden[e.gameId];
     });
 
     this.hook('S_USER_LOCATION', this.mod.majorPatchVersion >= 105 ? 6 : 5, (e) => {
-      this.user_list[e.gameId] ? this.user_list[e.gameId].loc = e.dest : null;
-      if (this.user_hidden[e.gameId])
-        return false;
+      if (this.userList[e.gameId]) this.userList[e.gameId].loc = e.dest;
+      if (this.userShown[e.gameId]) this.userShown[e.gameId].loc = e.dest;
+      if (this.userHidden[e.gameId]) return false;
+    });
+
+    this.hook('S_ACTION_STAGE', 9, (e) => {
+      if (this.mod.game.me.gameId !== e.gameId && this.userList[e.gameId]) {
+        if (this.userHidden[e.gameId]) return false;
+        if (this.mod.settings.mode === 2) return false;
+      }
+    });
+
+    this.hook('S_ACTION_END', 5, (e) => {
+      if (this.mod.game.me.gameId !== e.gameId && this.userList[e.gameId]) {
+        this.userList[e.gameId].loc = e.loc;
+        if (this.userHidden[e.gameId]) {
+          this.userHidden[e.gameId].loc = e.loc;
+          return false;
+        }
+        if (this.mod.settings.mode === 2 && this.userShown[e.gameId]) {
+          this.mod.toClient('S_USER_LOCATION', this.mod.majorPatchVersion >= 105 ? 6 : 5, {
+            gameId: e.gameId,
+            loc: this.userShown[e.gameId].loc,
+            w: e.w,
+            speed: 300,
+            dest: e.loc,
+            type: 7
+          });
+          this.userShown[e.gameId].loc = e.loc;
+          return false;
+        }
+      }
+    });
+
+    // hit
+    // this.mod.majorPatchVersion >= 86 ? 14 : 13
+    this.hook('S_EACH_SKILL_RESULT', 14, (e) => {
+      if (this.userHidden[e.target]) return false;
+      if (this.mod.game.me.gameId === e.source || this.mod.game.me.gameId === e.owner) {
+        if (this.mod.settings.hide_myHit) return false;
+      }
+      else if (this.mod.settings.hide_hit) return false;
+    });
+
+    // abnormality
+    this.hook('S_ABNORMALITY_BEGIN', 4, (e) => {
+      if (this.userHidden[e.target]) return false;
+      if (this.mod.game.me.gameId == e.target) {
+        if (this.mod.settings.hide_drunkScreen && DRUNK_ABN.includes(e.id))
+          return false;
+      }
+    });
+
+    this.hook('S_ABNORMALITY_REFRESH', 2, (e) => {
+      if (this.userHidden[e.target]) return false;
+    });
+
+    this.hook('S_ABNORMALITY_END', 1, (e) => {
+      if (this.userHidden[e.target]) return false;
+    });
+
+    // fear
+    this.hook('S_FEARMOVE_STAGE', 2, (e) => {
+      if (this.userHidden[e.gameId]) return false;
+      if (this.npcHidden[e.gameId]) return false;
+    });
+
+    this.hook('S_FEARMOVE_END', 2, (e) => {
+      if (this.userHidden[e.gameId]) return false;
+      if (this.npcHidden[e.gameId]) return false;
+    });
+
+    // mount
+    this.hook('S_MOUNT_VEHICLE', 2, (e) => {
+      if (this.userList[e.gameId]) this.userList[e.gameId].mount = e.id;
+      if (this.userHidden[e.gameId]) return false;
+    });
+
+    this.hook('S_UNMOUNT_VEHICLE', 2, (e) => {
+      if (this.userList[e.gameId]) this.userList[e.gameId].mount = 0;
+      if (this.userHidden[e.gameId]) return false;
     });
 
     // party
     // this.mod.majorPatchVersion >= 69 ? 7 : 6
     // this.mod.majorPatchVersion >= 90 ? 8 : 7
     this.hook('S_PARTY_MEMBER_LIST', this.mod.majorPatchVersion >= 106 ? 9 : 8, (e) => {
-      e.members.forEach((m) => {
-        this.party_list[m.gameId] = m;
+      e.members.forEach((member) => {
+        this.partyList[member.gameId] = member;
+        if (this.mod.settings.mode === 3) return;
+        if (!this.mod.settings.party) return;
+        if (this.userHidden[member.gameId])
+          this.showUser(this.userHidden[member.gameId]);
       });
     });
 
     this.hook('S_LEAVE_PARTY', 'event', () => {
-      this.party_list = {};
-      this.handle_hide_user();
+      for (let i in this.partyList) {
+        const member = this.partyList[i];
+        if (this.mod.settings.guild && this.guild.has(member.guildName))
+          continue;
+        if (this.mod.settings.mode < 3)
+          continue;
+        if (this.userList[member.gameId])
+          this.hideUser(this.userList[member.gameId]);
+      }
+      this.partyList = {};
     });
 
+    // TODO
     // npc: summons, fireworks
     this.hook('S_SPAWN_NPC', this.mod.majorPatchVersion >= 101 ? 12 : 11, (e) => {
-      if (e.templateId === 9901 && e.walkSpeed == 0 && e.runSpeed == 0)
+      if (e.templateId === 9901 && e.walkSpeed == 0 && e.runSpeed == 0) {
+        this.npcHidden[e.gameId] = e;
         return false;
+      }
 
       if (e.huntingZoneId === 1023) {
-        if (this.mod.settings.hide_all_summons) {
-          if (!this.mod.settings.hide_my_summons && this.mod.game.me.gameId === e.owner) {
-            return;
-          }
-          this.npc_hidden[e.gameId] = e;
+        if (this.mod.settings.hide_summons) {
+          if (!this.mod.settings.hide_mySummons && this.mod.game.me.gameId === e.owner) return;
+          this.npcHidden[e.gameId] = e;
           return false;
         }
-        if (this.mod.settings.hide_fireworks && (e.templateId === 60016000 || e.templateId === 80037000))
-          return false;
+        if (this.mod.settings.hide_fireworks) {
+          if (e.templateId === 60016000 || e.templateId === 80037000) return false;
+        }
       }
     });
 
     this.hook('S_DESPAWN_NPC', 3, (e) => {
-      delete this.npc_hidden[e.gameId];
-      if (this.mod.settings.hide_death_anim && e.type == 5) {
+      delete this.npcHidden[e.gameId];
+      if (this.mod.settings.hide_deathAnim && e.type === 5) {
         e.type = 1;
         return true;
       }
     });
 
-    // mount
-    this.hook('S_MOUNT_VEHICLE', 2, (e) => {
-      this.user_list[e.gameId] ? this.user_list[e.gameId].mount = e.id : null;
-    });
-
-    this.hook('S_UNMOUNT_VEHICLE', 2, (e) => {
-      this.user_list[e.gameId] ? this.user_list[e.gameId].mount = 0 : null;
-    });
-
-    //
-    this.hook('S_ACTION_STAGE', 9, (e) => {
-      if (this.mod.game.me.gameId !== e.gameId && this.user_list[e.gameId]) {
-        if (this.mod.settings.mode === 2 || this.user_hidden[e.gameId]) {
-          this.update_user_loc(e);
-          return false;
-        }
-      }
-    });
-
-    this.hook('S_ABNORMALITY_BEGIN', 4, (e) => {
-      if (this.user_hidden[e.target])
-        return false;
-      if (this.mod.settings.hide_drunk_screen && DRUNK_ABN.includes(e.id))
-        return false;
-    });
-
-    this.hook('S_ABNORMALITY_REFRESH', 2, (e) => {
-      if (this.user_hidden[e.target])
-        return false;
-    });
-
-    // hit
-    // this.mod.majorPatchVersion >= 86 ? 14 : 13
-    this.hook('S_EACH_SKILL_RESULT', 14, (e) => {
-      if (this.mod.game.me.gameId === e.source || this.mod.game.me.gameId === e.owner) {
-        if (this.mod.settings.hit_me) {
-          e.skill.id = 0;
-          return true;
-        }
-        if (this.mod.settings.hit_damage) {
-          e.value = BigInt(0);
-          return true;
-        }
-      }
-      if (this.mod.settings.hit_other &&
-        this.mod.game.me.gameId !== e.target &&
-        (this.user_list[e.owner] || this.user_list[e.source])) {
-        e.skill.id = 0;
-        return true;
-      }
-    });
-
-    // fear
-    this.hook('S_FEARMOVE_STAGE', 2, (e) => {
-      if ((this.mod.settings.mode === 3 && this.mod.game.me.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId])
-        return false;
-    });
-    this.hook('S_FEARMOVE_END', 2, (e) => {
-      if ((this.mod.settings.mode === 3 && this.mod.game.me.gameId !== e.gameId) || this.user_hidden[e.gameId] || this.npc_hidden[e.gameId])
-        return false;
-    });
-
     // proj
     this.hook('S_START_USER_PROJECTILE', 9, (e) => {
-      if (this.mod.game.me.gameId !== e.gameId && this.user_list[e.gameId] && (this.mod.settings.mode > 0 || this.mod.settings.hide_projectiles))
-        return false;
+      if (this.mod.game.me.gameId == e.gameId) return;
+      if (this.mod.settings.mode !== 0) return false;
     });
 
     this.hook('S_SPAWN_PROJECTILE', this.mod.majorPatchVersion >= 101 ? 6 : 5, (e) => {
-      if (this.mod.game.me.gameId !== e.gameId && this.user_list[e.gameId] && (this.mod.settings.mode > 0 || this.mod.settings.hide_projectiles))
-        return false;
+      if (this.mod.game.me.gameId == e.gameId) {
+        if (this.mod.settings.hide_myProjectiles) return false;
+        return;
+      }
+      if (this.mod.settings.hide_projectiles) return false;
+      if (this.mod.settings.mode !== 0) return false;
     });
 
     // dropitem
@@ -480,14 +523,12 @@ class fps_utils_lite {
 
     // action script
     this.hook('S_START_ACTION_SCRIPT', 'event', () => {
-      if (this.mod.settings.hide_action_script)
-        return false;
+      if (this.mod.settings.hide_actionScript) return false;
     });
 
     // guardian legion mission
     this.mod.tryHook('S_FIELD_EVENT_ON_ENTER', 'event', () => {
-      if (this.mod.settings.hide_glm)
-        return false;
+      if (this.mod.settings.hide_glm) return false;
     });
 
     this.hook('S_SYSTEM_MESSAGE', 1, (e) => {
@@ -495,7 +536,7 @@ class fps_utils_lite {
         let msg = this.mod.parseSystemMessage(e.message);
         switch (msg.id) {
           case 'SMT_FIELD_EVENT_REWARD_AVAILABLE':
-            this.send(`Completed ${msg.tokens.number} / 40 Guardian Legion Mission rewards`);
+            this.send(`Completed ${msg.tokens.number} Guardian Legion Mission rewards`);
             break;
         }
       }
@@ -519,24 +560,24 @@ class fps_utils_lite {
   saveState() {
     let state = {
       guild: this.guild,
-      user_list: this.user_list,
-      user_shown: this.user_shown,
-      user_hidden: this.user_hidden,
-      party_list: this.party_list,
-      npc_hidden: this.npc_hidden,
+      userList: this.userList,
+      userShown: this.userShown,
+      userHidden: this.userHidden,
+      partyList: this.partyList,
+      npcHidden: this.npcHidden,
     }
     return state;
   }
 
   loadState(state) {
     this.guild = state.guild;
-    this.user_list = state.user_list;
-    this.user_shown = state.user_shown;
-    this.user_hidden = state.user_hidden;
-    this.party_list = state.party_list;
-    this.npc_hidden = state.npc_hidden;
+    this.userList = state.userList;
+    this.userShown = state.userShown;
+    this.userHidden = state.userHidden;
+    this.partyList = state.partyList;
+    this.npcHidden = state.npcHidden;
   }
 
 }
 
-module.exports = { NetworkMod: fps_utils_lite };
+module.exports = { NetworkMod: FpsUtilsLite };

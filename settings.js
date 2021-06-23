@@ -4,11 +4,19 @@ const DefaultSettings = {
   "mode": 0,
   "guild": false,
   "party": false,
-  "hide_fireworks": false,
-  "hide_all_summons": false,
-  "hide_my_summons": false,
-  "hide_death_anim": false,
+  "hide_hit": false,
   "hide_projectiles": false,
+  "hide_summons": false,
+  "hide_myHit": false,
+  "hide_myProjectiles": false,
+  "hide_mySummons": false,
+  
+  "hide_actionScript": false,
+  "hide_deathAnim": false,
+  "hide_drunkScreen": false,
+  "hide_fireworks": false,
+  "hide_glm": false,
+
   "hide_dropitem": false,
   "dropitem_list": [
     639, // speed mote
@@ -16,13 +24,7 @@ const DefaultSettings = {
     7214, // scroll of resurrection
     8000, 8001, 8002, 8003, 8004, 8005, // various hp and mp motes
     91344 // fashion coupon
-  ],
-  "hide_action_script": false,
-  "hide_drunk_screen": false,
-  "hide_glm": false,
-  "hit_me": false,
-  "hit_other": true,
-  "hit_damage": false
+  ]
 };
 
 function MigrateSettings(from_ver, to_ver, settings) {
@@ -69,9 +71,29 @@ function MigrateSettings(from_ver, to_ver, settings) {
         break;
       case 6:
         settings.hide_glm = false;
+        break;
       case 7:
         delete settings.hide_camera_shake;
         delete settings.hide_servants;
+        break;
+      case 8:
+        settings.hide_actionScript = settings.hide_action_script;
+        settings.hide_deathAnim = settings.hide_death_anim;
+        settings.hide_drunkScreen = settings.hide_drunk_screen;
+        settings.hide_hit = settings.hit_other;
+        settings.hide_myHit = settings.hit_me;
+        settings.hide_summons = settings.hide_all_summons;
+        settings.hide_mySummons = settings.hide_my_summons;
+        settings.hide_myProjectiles = false;
+        delete settings.hide_action_script;
+        delete settings.hide_death_anim;
+        delete settings.hide_drunk_screen;
+        delete settings.hit_other;
+        delete settings.hit_me;
+        delete settings.hide_my_summons;
+        delete settings.hide_all_summons;
+        delete settings.hit_damage;
+        break;
     }
 
     return settings;

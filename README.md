@@ -19,44 +19,42 @@ tera-toolbox module to help increase fps
 - `fps`
 ### Arguments
 - `actionscript`
-  - Toggle screen zoom script hide/show
+  - Toggle screen zoom script
 - `all`
   - Show all users
 - `deathanim`
-  - Toggle death animation hide/show
+  - Toggle death animation
 - `dropitem`
-  - Toggle dropitem hide/show
+  - Toggle dropitem
   - `add <id | chat link>` : Add `id` to dropitem list
   - `list` : Print dropitem list in console
   - `rm <id | chat link>` : Remove `id` from dropitem list
 - `drunkscreen`
-  - Toggle drunk screen abnormality hide/show
+  - Toggle drunk screen abnormality
 - `fireworks`
-  - Toggle fireworks hide/show
+  - Toggle fireworks
 - `glm`
-  - Toggle Guardian Mission Legion UI hide/show
+  - Toggle Guardian Mission Legion UI
 - `guild`
-  - Toggle guild members hide/show
+  - Toggle guild members
 - `hit`
-  - `damage` : Toggle user skill damage numbers hide/show
-  - `me` : Toggle user skill hits hide/show
-  - `other` : Toggle other player skill hits hide/show
+  - Toggle other user skill hit effect
+  - `mine` : Toggle user skill hit effect
 - `mode`
-  - `0` : Disable fps improvements
-  - `1` : Set mode to 1, with projectiles hidden
-  - `2` : Set mode to 2, with additional skill effects hidden
-  - `3` : Set mode to 3, with additional players hidden
-- `on`
-- `off`
+  - `0` : Disable FPS improvements
+  - `1` : Disable projectiles and select skill effects
+  - `2` : Disable skill motion of other players
+  - `3` : Hide all other players, takes priority over `guild` and `party` option
 - `party`
-  - Toggle party members hide/show
+  - Toggle party members
 - `proj`
-  - Toggle projectiles hide/show
+  - Toggle other user projectiles
+  - `mine` : Toggle user projectiles
 - `status`
   - Print status of relevant variables
 - `summons`
-  - Toggle summons hide/show
-  - `mine` : Toggles user summons hide/show
+  - Toggle other user summons
+  - `mine` : Toggles user summons
 
 ## Info
 - Original developer : [Saegusae](https://github.com/Saegusae)
@@ -80,6 +78,14 @@ tera-toolbox module to help increase fps
 ## Changelog
 <details>
 
+    1.0a
+    - Fixed S_LOAD_TOPO issue
+    - Replaced `hit other` option with `hit` option
+    - Added `hit mine` option
+    - Added `proj mine` option
+    - Removed `hit damage` option
+    - Removed `off` option
+    - Removed `on` option
     1.09
     - Deprecated `camerashake` option
     - Deprecated `servants` option

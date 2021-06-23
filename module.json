@@ -8,11 +8,11 @@
   "options": {
     "niceName": "fps-utils",
     "reloadable": true,
-    "settingsVersion": 7,
+    "settingsVersion": 8,
     "settingsFile": "config.json",
     "settingsMigrator": "settings.js"
   },
   "servers": ["https://raw.githubusercontent.com/seraphinush-gaming/fps-utils-lite/master/"],
   "supportUrl": "https://github.com/seraphinush-gaming/fps-utils-lite/blob/master/README.md",
-  "version": "1.09.04.v106.02"
+  "version": "1.0a.00.v106.02"
 }
