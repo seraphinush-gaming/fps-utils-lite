@@ -234,17 +234,12 @@ class FpsUtilsLite {
     for (let i in this.userShown) {
       const user = this.userShown[i];
       if (this.mod.settings.guild) {
-        if (!this.guild.has(user.guildName) || user.guildName == '') {
-          toHide.push(user);
-          continue;
-        }
+        if (this.guild.has(user.guildName) && user.guildName !== '') continue;
       }
       if (this.mod.settings.party) {
-        if (!this.partyList[user.gameId]) {
-          toHide.push(user);
-          continue;
-        }
+        if (this.partyList[user.gameId]) continue;
       }
+      toHide.push(user);
     }
 
     let toShow = [];
@@ -349,10 +344,11 @@ class FpsUtilsLite {
       if (this.mod.settings.party && this.partyList[e.gameId])
         return this.userShown[e.gameId] = e;
 
-      if (this.mod.settings.mode < 3)
-        return this.userShown[e.gameId] = e;
+      if (!this.mod.settings.guild && !this.mod.settings.party)
+        if (this.mod.settings.mode < 3)
+          return this.userShown[e.gameId] = e;
 
-      this.userShown[e.gameId] = e;
+      this.userHidden[e.gameId] = e;
       return false;
     });
 
@@ -461,11 +457,14 @@ class FpsUtilsLite {
 
     this.hook('S_LEAVE_PARTY', 'event', () => {
       for (let i in this.partyList) {
-        const member = this.partyList[i];
         if (this.mod.settings.guild && this.guild.has(member.guildName))
           continue;
-        if (this.mod.settings.mode < 3)
-          continue;
+
+        if (!this.mod.settings.guild && !this.mod.settings.party)
+          if (this.mod.settings.mode < 3)
+            continue;
+
+        const member = this.partyList[i];
         if (this.userList[member.gameId])
           this.hideUser(this.userList[member.gameId]);
       }
