@@ -41,20 +41,20 @@ function MigrateSettings(from_ver, to_ver, settings) {
     switch (to_ver) {
       case 2:
         settings.hide_fireworks = settings.hideFireworks;
-        settings.hide_all_summons = settings.hideAllSummons;
-        settings.hide_my_summons = !settings.keepMySummons;
-        settings.hide_projectiles = settings.hideProjectiles;
-        settings.hide_servants = settings.hideServants;
-        settings.hit_me = settings.hitMe;
-        settings.hit_other = settings.hitOther;
-        settings.hit_damage = settings.hitDamage;
         delete settings.hideFireworks;
+        settings.hide_all_summons = settings.hideAllSummons;
         delete settings.hideAllSummons;
+        settings.hide_my_summons = !settings.keepMySummons;
         delete settings.keepMySummons;
+        settings.hide_projectiles = settings.hideProjectiles;
         delete settings.hideProjectiles;
+        settings.hide_servants = settings.hideServants;
         delete settings.hideServants;
+        settings.hit_me = settings.hitMe;
         delete settings.hitMe;
+        settings.hit_other = settings.hitOther;
         delete settings.hitOther;
+        settings.hit_damage = settings.hitDamage;
         delete settings.hitDamage;
         break;
       case 3:
@@ -77,22 +77,23 @@ function MigrateSettings(from_ver, to_ver, settings) {
         delete settings.hide_servants;
         break;
       case 8:
-        settings.hide_actionScript = settings.hide_action_script;
-        settings.hide_deathAnim = settings.hide_death_anim;
-        settings.hide_drunkScreen = settings.hide_drunk_screen;
-        settings.hide_hit = settings.hit_other;
-        settings.hide_myHit = settings.hit_me;
-        settings.hide_summons = settings.hide_all_summons;
-        settings.hide_mySummons = settings.hide_my_summons;
         settings.hide_myProjectiles = false;
-        delete settings.hide_action_script;
-        delete settings.hide_death_anim;
-        delete settings.hide_drunk_screen;
-        delete settings.hit_other;
-        delete settings.hit_me;
-        delete settings.hide_my_summons;
-        delete settings.hide_all_summons;
         delete settings.hit_damage;
+
+        settings.hide_actionScript = settings.hide_action_script;
+        delete settings.hide_action_script;
+        settings.hide_deathAnim = settings.hide_death_anim;
+        delete settings.hide_death_anim;
+        settings.hide_drunkScreen = settings.hide_drunk_screen;
+        delete settings.hide_drunk_screen;
+        settings.hide_hit = settings.hit_other;
+        delete settings.hit_other;
+        settings.hide_myHit = settings.hit_me;
+        delete settings.hit_me;
+        settings.hide_summons = settings.hide_all_summons;
+        delete settings.hide_all_summons;
+        settings.hide_mySummons = settings.hide_my_summons;
+        delete settings.hide_my_summons;
         break;
     }
 

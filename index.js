@@ -511,8 +511,11 @@ class FpsUtilsLite {
         if (this.mod.settings.hide_myProjectiles) return false;
         return;
       }
-      if (this.mod.settings.hide_projectiles) return false;
-      if (this.mod.settings.mode !== 0) return false;
+      if (this.userList[e.gameId]) {
+        if (this.userHidden[e.gameId]) return false;
+        if (this.mod.settings.hide_projectiles) return false;
+        if (this.mod.settings.mode !== 0) return false;
+      }
     });
 
     // dropitem
