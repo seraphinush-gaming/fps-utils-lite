@@ -17,18 +17,23 @@ tera-toolbox module to help increase fps
 
 ## Usage
 - `fps`
+
 ### Arguments
 - `actionscript`
-  - Toggle screen zoom script
+  - Toggle screen script
 - `all`
   - Show all users
 - `deathanim`
   - Toggle death animation
 - `dropitem`
-  - Toggle dropitem
-  - `add <id | chat link>` : Add `id` to dropitem list
-  - `list` : Print dropitem list in console
-  - `rm <id | chat link>` : Remove `id` from dropitem list
+  - Toggle select dropitem
+  - `add <id | chat link>`
+    - Add item to dropitem list
+    - eg. `fps dropitem add <Essential Mana>`
+  - `list` : Print dropitem list to console
+  - `rm <id | chat link>`
+    - Remove item from dropitem list
+    - eg. `fps dropitem rm <Essential Mana>`
 - `drunkscreen`
   - Toggle drunk screen abnormality
 - `fireworks`
@@ -43,18 +48,22 @@ tera-toolbox module to help increase fps
 - `mode`
   - `0` : Disable FPS improvements
   - `1` : Disable projectiles and select skill effects
-  - `2` : Disable skill motion of other players
+  - `2` : Disable all skill motion of other players
   - `3` : Hide all other players, takes priority over `guild` and `party` option
 - `party`
   - Toggle party members
 - `proj`
   - Toggle other user projectiles
   - `mine` : Toggle user projectiles
+- `refresh`
+  - Refresh spawned users
 - `status`
-  - Print status of relevant variables
+  - Print settings
 - `summons`
   - Toggle other user summons
   - `mine` : Toggles user summons
+- `?`
+  - Send command and arguments to chat
 
 ## Info
 - Original developer : [Saegusae](https://github.com/Saegusae)

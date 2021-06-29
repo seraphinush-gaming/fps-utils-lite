@@ -13,7 +13,9 @@ const DRUNK_ABN = [
   776017, 806001, 806002, 811061, 821101, 905656, 905657,
   7102001, 45000011, 45000012, 47660800, 47660900, 47661000, 47662300,
   999001011
-]
+];
+
+const REGEX_ID = /#(\d+)@/;
 
 class FpsUtilsLite {
 
@@ -24,7 +26,7 @@ class FpsUtilsLite {
     this.hooks = [];
     this.loaded = false;
 
-    // initialize
+    // init
     this.guild = new Set();
     this.userList = {};
     this.userShown = {};
@@ -49,7 +51,7 @@ class FpsUtilsLite {
       'dropitem': {
         '$none': () => {
           mod.settings.hide_dropitem = !mod.settings.hide_dropitem;
-          this.send(`Hiding of user-designated dropitems ${mod.settings.hide_dropitem ? 'en' : 'dis'}abled.`);
+          this.send(`Hiding of select dropitems ${mod.settings.hide_dropitem ? 'en' : 'dis'}abled.`);
         },
         'add': async (id) => {
           if (!id)
@@ -57,13 +59,13 @@ class FpsUtilsLite {
 
           (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatLinkId(id);
           mod.settings.dropitem_list.push(id);
+          mod.settings.dropitem_list = Array.from(new Set(mod.settings.dropitem_list));
+          mod.settings.dropitem_list.sort((a, b) => parseInt(a) - parseInt(b));
           let name = mod.game.data.items.get(id) ? mod.game.data.items.get(id).name : 'undefined';
           this.send(`Added &lt;${name}&gt; to dropitem list.`);
         },
         'list': () => {
           mod.log(`Dropitem list :`);
-          mod.settings.dropitem_list.sort((a, b) => parseInt(a) - parseInt(b));
-          mod.settings.dropitem_list = Array.from(new Set(mod.settings.dropitem_list));
           mod.settings.dropitem_list.forEach((item) => {
             let name = mod.game.data.items.get(item) ? mod.game.data.items.get(item).name : 'undefined';
             console.log('- ' + item + ' : ' + name);
@@ -72,7 +74,7 @@ class FpsUtilsLite {
         },
         'rm': async (id) => {
           if (!id)
-            return this.send(`Invalid argument. usage : fps dropitem add &lt;item id | chat link&gt;`);
+            return this.send(`Invalid argument. usage : fps dropitem rm &lt;item id | chat link&gt;`);
 
           (!isNaN(parseInt(id))) ? id = parseInt(id) : id = await this.get_chatLinkId(id);
           mod.settings.dropitem_list.splice(mod.settings.dropitem_list.indexOf(id), 1);
@@ -89,11 +91,11 @@ class FpsUtilsLite {
       },
       'fireworks': () => {
         mod.settings.hide_fireworks = !mod.settings.hide_fireworks;
-        this.send(`Hiding of firework effects ${mod.settings.hide_fireworks ? 'en' : 'dis'}abled.`);
+        this.send(`Hiding of fireworks ${mod.settings.hide_fireworks ? 'en' : 'dis'}abled.`);
       },
       'glm': () => {
         mod.settings.hide_glm = !mod.settings.hide_glm;
-        this.send(`Hiding of Guardian Legion Mission ui ${mod.settings.hide_glm ? 'en' : 'dis'}abled.`);
+        this.send(`Hiding of Guardian Legion Mission UI ${mod.settings.hide_glm ? 'en' : 'dis'}abled.`);
       },
       'guild': () => {
         mod.settings.guild = !mod.settings.guild;
@@ -110,15 +112,12 @@ class FpsUtilsLite {
             mod.settings.hide_myHit = !mod.settings.hide_myHit;
             this.send(`Hiding of the player's skill hit effect ${mod.settings.hide_myHit ? 'en' : 'dis'}abled.`);
             break;
-          case 'damage': // TODO
-            this.send(`Deprecated. please refer to the in-game option to configure damage number visibility.`);
-            break;
           default:
             this.send(`Invalid argument. usage : fps hit [mine]`);
         }
       },
       'mode': (arg) => {
-        let prev = mod.settings.mode;
+        const prev = mod.settings.mode;
         switch (arg) {
           case '0':
             mod.settings.mode = 0;
@@ -151,7 +150,7 @@ class FpsUtilsLite {
       'party': () => {
         mod.settings.party = !mod.settings.party
         this.handle_hideUser();
-        this.send(`Hiding of everyone but your group ${mod.settings.party ? 'en' : 'dis'}abled.`);
+        this.send(`Hiding of everyone but your party ${mod.settings.party ? 'en' : 'dis'}abled.`);
       },
       'proj': (arg) => {
         switch (arg) {
@@ -191,10 +190,8 @@ class FpsUtilsLite {
             this.send(`Invalid argument. usage : fps summons [mine]`);
         }
       },
-      '?': () => {
-        this.send(`Usage : fps [actionscript|all|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|party|proj|refresh|summons]`);
-      },
-      '$default': () => { this.send(`Invalid argument. usage : fps [actionscript|all|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|party|proj|refresh|summons]`); }
+      '?': () => this.send(`Usage : fps [actionscript|all|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|party|proj|refresh|summons]`),
+      '$default': () => this.send(`Invalid argument. usage : fps [actionscript|all|deathanim|dropitem|drunkscreen|fireworks|glm|guild|hit|mode|party|proj|refresh|summons|?]`)
     });
 
     // game state
@@ -220,9 +217,14 @@ class FpsUtilsLite {
 
   destructor() {
     this.command.remove('fps');
-    this.mod.settings.dropitem_list.sort((a, b) => parseInt(a) - parseInt(b));
     this.mod.settings.dropitem_list = Array.from(new Set(this.mod.settings.dropitem_list));
+    this.mod.settings.dropitem_list.sort((a, b) => parseInt(a) - parseInt(b));
     this.unload();
+
+    this.loaded = undefined;
+    this.hooks = undefined;
+    this.command = undefined;
+    this.mod = undefined;
   }
 
   // helper
@@ -231,7 +233,7 @@ class FpsUtilsLite {
     if (!this.mod.settings.guild && !this.mod.settings.party) return this.showAll();
 
     let toHide = [];
-    for (let i in this.userShown) {
+    for (const i in this.userShown) {
       const user = this.userShown[i];
       if (this.mod.settings.guild) {
         if (this.guild.has(user.guildName) && user.guildName !== '') continue;
@@ -243,7 +245,7 @@ class FpsUtilsLite {
     }
 
     let toShow = [];
-    for (let i in this.userHidden) {
+    for (const i in this.userHidden) {
       const user = this.userHidden[i];
       if (this.mod.settings.guild) {
         if (this.guild.has(user.guildName) && user.guildName !== '') {
@@ -274,7 +276,7 @@ class FpsUtilsLite {
 
   showAll() {
     return new Promise((resolve) => {
-      for (let i in this.userHidden) {
+      for (const i in this.userHidden) {
         this.mod.send('S_SPAWN_USER', 17, this.userHidden[i]);
         this.userShown[this.userHidden[i].gameId] = this.userHidden[i];
         delete this.userHidden[i];
@@ -298,7 +300,7 @@ class FpsUtilsLite {
 
   hideAll() {
     return new Promise((resolve) => {
-      for (let i in this.userList) {
+      for (const i in this.userList) {
         this.mod.send('S_DESPAWN_USER', 3, {
           gameId: this.userList[i].gameId,
           type: 1
@@ -313,8 +315,7 @@ class FpsUtilsLite {
 
   get_chatLinkId(chatLink) {
     return new Promise((resolve) => {
-      let regex_id = /#(\d+)@/;
-      let res = chatLink.match(regex_id);
+      let res = chatLink.match(REGEX_ID);
       res = parseInt(res[1]);
       resolve(res);
     });
@@ -404,7 +405,7 @@ class FpsUtilsLite {
     });
 
     // abnormality
-    this.hook('S_ABNORMALITY_BEGIN', 4, (e) => {
+    this.hook('S_ABNORMALITY_BEGIN', this.mod.majorPatchVersion >= 107 ? 5 : 4, (e) => {
       if (this.userHidden[e.target]) return false;
       if (this.mod.game.me.gameId == e.target) {
         if (this.mod.settings.hide_drunkScreen && DRUNK_ABN.includes(e.id))
@@ -456,7 +457,7 @@ class FpsUtilsLite {
     });
 
     this.hook('S_LEAVE_PARTY', 'event', () => {
-      for (let i in this.partyList) {
+      for (const i in this.partyList) {
         if (this.mod.settings.guild && this.guild.has(member.guildName))
           continue;
 
@@ -532,7 +533,7 @@ class FpsUtilsLite {
 
     this.hook('S_SYSTEM_MESSAGE', 1, (e) => {
       if (this.mod.settings.hide_glm) {
-        let msg = this.mod.parseSystemMessage(e.message);
+        const msg = this.mod.parseSystemMessage(e.message);
         switch (msg.id) {
           case 'SMT_FIELD_EVENT_REWARD_AVAILABLE':
             this.send(`Completed ${msg.tokens.number} Guardian Legion Mission rewards`);
@@ -546,7 +547,7 @@ class FpsUtilsLite {
 
   unload() {
     if (this.hooks.length) {
-      for (let h of this.hooks)
+      for (const h of this.hooks)
         this.mod.unhook(h);
       this.hooks = [];
     }
@@ -557,7 +558,7 @@ class FpsUtilsLite {
   send(msg) { this.command.message(': ' + msg); }
 
   saveState() {
-    let state = {
+    const state = {
       guild: this.guild,
       userList: this.userList,
       userShown: this.userShown,
