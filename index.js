@@ -401,7 +401,9 @@ class FpsUtilsLite {
       if (this.mod.game.me.gameId === e.source || this.mod.game.me.gameId === e.owner) {
         if (this.mod.settings.hide_myHit) return false;
       }
-      else if (this.mod.settings.hide_hit) return false;
+      else if (this.userList[e.source] || this.userList[e.owner]) {
+        if (this.mod.settings.hide_hit) return false;
+      }
     });
 
     // abnormality
