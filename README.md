@@ -1,7 +1,7 @@
 ### NOTE
 This module is a simplified version of module `fps-utils` by Saegusae, Codeagon, Risenio, et al. and does not have all the features of the full module. for the full experience, please refer to the forks of the full module below.
 - Support Codeagon : [![ko-fi](https://img.shields.io/badge/kofi-donate-333333.svg?colorA=F0AD4E&colorB=333333)](https://ko-fi.com/codeagon)
-- Support Saegusae : [![patreon](https://img.shields.io/badge/patreon-donate-333333.svg?colorA=E85B46&colorB=333333)](https://www.patreon.com/saegusa)
+- Support Saegusae : [![patreon](https://img.shields.io/badge/patreon-pledge-333333.svg?colorA=E85B46&colorB=333333)](https://www.patreon.com/saegusa)
 
 ---
 
@@ -47,9 +47,9 @@ tera-toolbox module to help increase fps
   - `mine` : Toggle user skill hit effect
 - `mode`
   - `0` : Disable FPS improvements
-  - `1` : Disable projectiles and select skill effects
-  - `2` : Disable all skill motion of other players
-  - `3` : Hide all other players, takes priority over `guild` and `party` option
+  - `1` : Remove projectiles and select skill effects
+  - `2` : Remove all skill motion of other players
+  - `3` : Remove all other players, takes priority over `guild` and `party` option
 - `party`
   - Toggle party members
 - `proj`

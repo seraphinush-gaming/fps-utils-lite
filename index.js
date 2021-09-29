@@ -396,7 +396,7 @@ class FpsUtilsLite {
 
     // hit
     // this.mod.majorPatchVersion >= 86 ? 14 : 13
-    this.hook('S_EACH_SKILL_RESULT', 14, (e) => {
+    this.hook('S_EACH_SKILL_RESULT', this.mod.majorPatchVersion >= 110 ? 15 : 14, (e) => {
       if (this.userHidden[e.target]) return false;
       if (this.mod.game.me.gameId === e.source || this.mod.game.me.gameId === e.owner) {
         if (this.mod.settings.hide_myHit) return false;
